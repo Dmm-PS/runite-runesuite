@@ -1,0 +1,7 @@
+.idea
+target
+out
+warnings.txt
+errors.txt
+*.iml
+server-data.json
