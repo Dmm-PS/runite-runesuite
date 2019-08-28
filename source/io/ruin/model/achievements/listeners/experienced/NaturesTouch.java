@@ -13,7 +13,7 @@ import io.ruin.model.skills.farming.crop.impl.FlowerCrop;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NaturesTouch implements AchievementListener {
+public final class NaturesTouch implements AchievementListener {
 
     private static List<PlayerCounter> counters = new ArrayList<>();
 
@@ -31,8 +31,9 @@ public class NaturesTouch implements AchievementListener {
 
     public static int get(Player player) {
         int total = 0;
-        for (PlayerCounter c : counters)
-            total += c.get(player);
+        for (PlayerCounter counter : counters) {
+            total += counter.get(player);
+        }
         return total;
     }
 
@@ -43,18 +44,19 @@ public class NaturesTouch implements AchievementListener {
 
     @Override
     public AchievementStage stage(Player player) {
-        int amt = get(player);
-        if (amt >= 100)
+        int amount = get(player);
+        if (amount >= 100) {
             return AchievementStage.FINISHED;
-        else if (amt == 0)
+        } else if (amount == 0) {
             return AchievementStage.NOT_STARTED;
-        else
+        } else {
             return AchievementStage.STARTED;
+        }
     }
 
     @Override
     public String[] lines(Player player, boolean finished) {
-        return new String[]{
+        return new String[] {
                 Achievement.slashIf("", finished),
                 "",
                 Achievement.slashIf("<col=000080>Assignment</col>: Harvest 200 items from allotment and flower patches.", finished),

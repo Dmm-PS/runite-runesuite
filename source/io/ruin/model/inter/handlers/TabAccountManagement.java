@@ -87,7 +87,7 @@ public class TabAccountManagement {
         if (player.isGroup(PlayerGroup.GODLIKE_DONATOR)) {
             return PlayerGroup.GODLIKE_DONATOR.tag() + " Godlike";
         } else if (player.isGroup(PlayerGroup.UBER_DONATOR)) {
-            return PlayerGroup.UBER_DONATOR.tag() + " Master";
+            return PlayerGroup.UBER_DONATOR.tag() + " MASTER";
         } else if (player.isGroup(PlayerGroup.LEGENDARY_DONATOR)) {
             return PlayerGroup.LEGENDARY_DONATOR.tag() + " Ultimate";
         } else if (player.isGroup(PlayerGroup.EXTREME_DONATOR)) {

@@ -1,5 +1,6 @@
 package io.ruin.utility;
 
+import io.ruin.cache.Color;
 import io.ruin.cache.Icon;
 import io.ruin.model.World;
 import io.ruin.model.entity.player.Player;
@@ -14,8 +15,6 @@ public enum Broadcast {
     GLOBAL(Icon.YELLOW_INFO_BADGE, (player, message) -> CentralClient.sendGlobalMessage(-1, message));
 
     private final Icon newsIcon;
-
-
     private final BiConsumer<Player, String> consumer;
 
     Broadcast(Icon newsIcon, BiConsumer<Player, String> consumer) {
@@ -59,8 +58,7 @@ public enum Broadcast {
     public void sendNews(Player player, Icon overrideIcon, String title, String message) {
 
         //Player only required to be set when this == FRIENDS.
-      consumer.accept(player, (overrideIcon == null ? newsIcon.tag() : overrideIcon.tag()) + "<col=006600> " +
-             (title == null ? "News:" : title + ":") + " <col=1e44b3>" + message);
+        consumer.accept(player, "[" + Color.DARK_RED.tag() + (title == null ? "News" : title + "") + "</col>] " + message);
     }
-
+//<col=B20000>
 }

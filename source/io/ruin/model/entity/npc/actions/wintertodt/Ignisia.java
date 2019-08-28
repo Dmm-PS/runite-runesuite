@@ -47,7 +47,7 @@ public class Ignisia {
     private static void aboutYourself(Player player, NPC npc) {
         player.dialogue(
                 new PlayerDialogue("Tell me about yourself."),
-                new NPCDialogue(npc, "I am Ignisia, Grand Master of the Order of the Sacred<br>Flame. I have served our Order faithfully since I" +
+                new NPCDialogue(npc, "I am Ignisia, Grand MASTER of the Order of the Sacred<br>Flame. I have served our Order faithfully since I" +
                         "<br>passed the Trials of Fire before the Ascent of Arceuus."),
                 new NPCDialogue(npc, "How else may I be of assistance?"),
                 new OptionsDialogue(

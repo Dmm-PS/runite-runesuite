@@ -1,5 +1,6 @@
 package io.ruin.model.achievements.listeners.master;
 
+import com.google.common.collect.ImmutableSet;
 import io.ruin.api.utils.NumberUtils;
 import io.ruin.model.achievements.Achievement;
 import io.ruin.model.achievements.AchievementListener;
@@ -12,17 +13,16 @@ import java.util.List;
 
 import static io.ruin.model.entity.player.PlayerCounter.*;
 
-public class ExpertRunecrafter implements AchievementListener {
+public final class ExpertRunecrafter implements AchievementListener {
 
+    private static final ImmutableSet<PlayerCounter> COUNTERS = ImmutableSet.of(
+            CRAFTED_AIR, CRAFTED_ASTRAL, CRAFTED_BLOOD,
+            CRAFTED_BODY, CRAFTED_CHAOS, CRAFTED_COSMIC,
+            CRAFTED_DEATH, CRAFTED_EARTH, CRAFTED_FIRE,
+            CRAFTED_LAW, CRAFTED_MIND, CRAFTED_NATURE,
+            CRAFTED_SOUL, CRAFTED_WATER);
 
     private static int get(Player player) {
-        List<PlayerCounter> COUNTERS = Arrays.asList(
-                CRAFTED_AIR, CRAFTED_ASTRAL, CRAFTED_BLOOD,
-                CRAFTED_BODY, CRAFTED_CHAOS, CRAFTED_COSMIC,
-                CRAFTED_DEATH, CRAFTED_EARTH, CRAFTED_FIRE,
-                CRAFTED_LAW, CRAFTED_MIND, CRAFTED_NATURE,
-                CRAFTED_SOUL, CRAFTED_WATER);
-
         return COUNTERS.stream().mapToInt(c -> c.get(player)).sum();
     }
 

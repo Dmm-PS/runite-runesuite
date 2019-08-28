@@ -219,6 +219,7 @@ public class SigmundTheMerchant {
                     stock.add(new ShopItem(563, 300));         // Law rune
                     stock.add(new ShopItem(561, 325));         // Nature rune
                     stock.add(new ShopItem(564, 350));         // Cosmic rune
+                    stock.add(new ShopItem(560, 500));         // Death rune
                     stock.add(new ShopItem(333, 50));          // Trout
                     stock.add(new ShopItem(329, 50));          // Salmon
                     stock.add(new ShopItem(1323, 500));        // Iron scimitar
@@ -276,9 +277,9 @@ public class SigmundTheMerchant {
                     stock.add(new ShopItem(579, 500));         // Blue wizard hat
                     stock.add(new ShopItem(577, 500));         // Blue wizard robe
                     stock.add(new ShopItem(1011, 500));        // Blue skirt
-                    stock.add(new ShopItem(3840,10000));       // Holy book
-                    stock.add(new ShopItem(3842,10000));       // Unholy book
-                    stock.add(new ShopItem(3844,10000));       // Book of balance
+                    stock.add(new ShopItem(3840,50000));       // Holy book
+                    stock.add(new ShopItem(3842,50000));       // Unholy book
+                    stock.add(new ShopItem(3844,50000));       // Book of balance
                     stock.add(new ShopItem(5935, 1250));        // Coconut milk
                     stock.add(new ShopItem(245, 1300));         // Wine of zamorak
                     stock.add(new ShopItem(221, 10));            // Eye of newt

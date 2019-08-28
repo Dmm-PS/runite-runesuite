@@ -226,10 +226,6 @@ public class BossEvent extends JournalEntry {
                 if (k == topKiller) { // whoever dealt most damage
                     if (boss.getId() == 7286 && Random.rollDie(100, 1)) {
                         player.getInventory().addOrDrop(13652, 1);
-                    } else if (boss.getId() == 5129 & Random.rollDie(100, 1)) {
-                        player.getInventory().addOrDrop(21006, 1);
-                    } else if (boss.getId() == 3358 & Random.rollDie(100, 1)) {
-                        player.getInventory().addOrDrop(20997, 1);
                     } else {
                         LootTable lootTable = World.isPVP() ? LOOT_TABLE : ECO_LOOT_TABLE;
                         player.getInventory().addOrDrop(lootTable.rollItem());

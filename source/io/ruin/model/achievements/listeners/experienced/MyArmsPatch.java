@@ -17,7 +17,7 @@ import io.ruin.model.skills.farming.crop.impl.HerbCrop;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyArmsPatch implements AchievementListener {
+public final class MyArmsPatch implements AchievementListener {
 
     private static List<PlayerCounter> counters = new ArrayList<>();
 
@@ -34,18 +34,19 @@ public class MyArmsPatch implements AchievementListener {
                     player.dialogue(new NPCDialogue(742, "Who dis? Human not good farmer."), new MessageDialogue("You must complete the " + Achievement.MY_ARMS_PATCH.name() + " achievement before My Arm will allow you to use his farming patch."));
                 } else {
                     player.dialogue(new NPCDialogue(742, "Hello human. Want to go to herb patch?"),
-                            new OptionsDialogue(new Option("Yes, please.", () -> player.startEvent(event -> {
-                                player.lock();
-                                player.getPacketSender().fadeOut();
-                                event.delay(2);
-                                player.getMovement().teleport(2831, 3678, 0);
-                                event.delay(2);
-                                player.getPacketSender().fadeIn();
-                                player.unlock();
-                                player.dialogue(new MessageDialogue("My Arm leads you through the stronghold."));
-                            })),
-                                    new Option("Not right now.", () -> {
-                                    })));
+                            new OptionsDialogue(
+                                    new Option("Yes, please.", () -> player.startEvent(event -> {
+                                        player.lock();
+                                        player.getPacketSender().fadeOut();
+                                        event.delay(2);
+                                        player.getMovement().teleport(2831, 3678, 0);
+                                        event.delay(2);
+                                        player.getPacketSender().fadeIn();
+                                        player.unlock();
+                                        player.dialogue(new MessageDialogue("My Arm leads you through the stronghold."));
+                                    })),
+                                    new Option("Not right now.", () -> { })
+                            ));
                 }
             } else {
                 player.dialogue(new NPCDialogue(npc, "We already here human. Go farm."));
@@ -65,17 +66,19 @@ public class MyArmsPatch implements AchievementListener {
 
     @Override
     public AchievementStage stage(Player player) {
-        int amt = get(player);
-        if (amt >= 200)
+        int amount = get(player);
+        if (amount >= 200) {
             return AchievementStage.FINISHED;
-        else if (amt == 0)
+        } else if (amount == 0) {
             return AchievementStage.NOT_STARTED;
+        }
+
         return AchievementStage.STARTED;
     }
 
     @Override
     public String[] lines(Player player, boolean finished) {
-        return new String[]{
+        return new String[] {
                 Achievement.slashIf("<col=000080>Assignment</col>: Harvest 200 herbs from farming patches.", finished),
                 Achievement.slashIf("<col=000080>Reward</col>: My Arm will allow you to use his herb patch.", finished),
                 "",

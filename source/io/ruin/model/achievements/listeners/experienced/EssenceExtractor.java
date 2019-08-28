@@ -7,7 +7,8 @@ import io.ruin.model.achievements.AchievementStage;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerCounter;
 
-public class EssenceExtractor implements AchievementListener {
+public final class EssenceExtractor implements AchievementListener {
+
     @Override
     public String name() {
         return "Essence Extractor";
@@ -16,12 +17,13 @@ public class EssenceExtractor implements AchievementListener {
     @Override
     public AchievementStage stage(Player player) {
         int amount = get(player);
-        if (amount == 0)
+        if (amount == 0) {
             return AchievementStage.NOT_STARTED;
-        else if (amount >= 500)
+        } else if (amount >= 500) {
             return AchievementStage.FINISHED;
-        else
+        } else {
             return AchievementStage.STARTED;
+        }
     }
 
     private static int get(Player player) {

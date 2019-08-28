@@ -20,6 +20,7 @@ import io.ruin.model.inter.journal.Journal;
 import io.ruin.model.inter.utils.Config;
 import io.ruin.model.inter.utils.Option;
 import io.ruin.model.map.Direction;
+import io.ruin.services.LatestUpdate;
 import io.ruin.utility.Broadcast;
 
 import java.util.HashMap;
@@ -77,7 +78,7 @@ public final class RuniteExpert {
                 } else {
                     player.dialogue(new ItemDialogue().one(9711, "If you have a question or are stuck on something, try visiting Runite's ::forums or ::discord. " +
                             "There's plenty of information for the new and experienced player alike.").lineHeight(17));
-                    //player.getPacketSender().sendMessage("Latest Update: " + LatestUpdate.LATEST_UPDATE_TITLE + "|" + LatestUpdate.LATEST_UPDATE_URL, "", 14);
+                    player.getPacketSender().sendMessage("Latest Update: " + LatestUpdate.LATEST_UPDATE_TITLE + "|" + LatestUpdate.LATEST_UPDATE_URL, "", 14);
                 }
         });
     }
@@ -103,7 +104,7 @@ public final class RuniteExpert {
         player.inTutorial = true;
         player.startEvent(event -> {
             player.lock(LockType.FULL_ALLOW_LOGOUT);
-            player.getMovement().teleport(3096, 3486, 0);
+            player.getMovement().teleport(3086, 3466, 0);
             player.face(Direction.WEST);
             if (actuallyNew) {
                 player.openInterface(InterfaceType.MAIN, Interface.APPEARANCE_CUSTOMIZATION);
@@ -195,7 +196,7 @@ public final class RuniteExpert {
             event.waitForDialogue(player);
             player.dialogue(
                     new NPCDialogue(guide, "I have one last piece of advice for you."),
-                    new NPCDialogue(guide, "To learn more about " + World.type.getWorldName() + ", have a look at the Introductory achievements. They are basic tasks that will reward you with some gold and teach you more about this world.") {
+                    new NPCDialogue(guide, "To learn more about " + World.type.getWorldName() + ", have a look at the INTRODUCTORY achievements. They are basic tasks that will reward you with some gold and teach you more about this world.") {
                         @Override
                         public void open(Player player) {
                             super.open(player);

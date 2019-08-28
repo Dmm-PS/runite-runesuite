@@ -261,7 +261,11 @@ public class CombatUtils {
     }
 
     public static void addMagicXp(Player player, double baseXp, int damage, boolean multiplier) {
-
+        if (player.getCombat().getTarget().npc != null) {
+            if (player.getCombat().getTarget().npc.getId() == 2668) {
+                return;
+            }
+        }
         double xp = baseXp + (damage * 2D);
         if(player.showHitAsExperience) {
             player.getStats().addXp(StatType.Magic, damage, false);

@@ -228,6 +228,7 @@ public enum Journal {
         BESTIARY.addEntry(BestiarySearchDrop.INSTANCE);
         BESTIARY.addEntry(BestiarySearchMonster.INSTANCE);
         BESTIARY.addCategory("Popular");
+        BESTIARY.addEntry(new BestiarySearchResult(8095)); //Galvek
         BESTIARY.addEntry(new BestiarySearchResult(415)); //Abyssal demon
         BESTIARY.addEntry(new BestiarySearchResult(5862)); //Cerberus
         BESTIARY.addEntry(new BestiarySearchResult(3162)); //Kree'arra
@@ -236,7 +237,6 @@ public enum Journal {
         BESTIARY.addEntry(new BestiarySearchResult(319)); //Corporeal Beast
         BESTIARY.addEntry(new BestiarySearchResult(6619)); //Chaos Fanatic
         BESTIARY.addEntry(new BestiarySearchResult(3129)); //K'ril Tsutsaroth
-        BESTIARY.addEntry(new BestiarySearchResult(6503)); //Callisto
         BESTIARY.addEntry(new BestiarySearchResult(2265)); //Dagannoth Supreme
         /**
          * Updating

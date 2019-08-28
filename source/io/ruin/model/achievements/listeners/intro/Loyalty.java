@@ -1,6 +1,5 @@
 package io.ruin.model.achievements.listeners.intro;
 
-import io.ruin.cache.Color;
 import io.ruin.model.World;
 import io.ruin.model.achievements.Achievement;
 import io.ruin.model.achievements.AchievementListener;
@@ -10,7 +9,8 @@ import io.ruin.model.entity.player.PlayerCounter;
 
 import static io.ruin.model.achievements.Achievement.counterStage;
 
-public class Loyalty implements AchievementListener {
+public final class Loyalty implements AchievementListener {
+
     @Override
     public String name() {
         return "Loyalty";
@@ -23,7 +23,7 @@ public class Loyalty implements AchievementListener {
 
     @Override
     public String[] lines(Player player, boolean finished) {
-        return new String[]{
+        return new String[] {
                 Achievement.slashIf("The loyalty chest can be looted once per day for increasingly", finished),
                 Achievement.slashIf("rare rewards. It is located in the building north of the Edgeville", finished),
                 Achievement.slashIf("bank, in the south west corner.", finished),

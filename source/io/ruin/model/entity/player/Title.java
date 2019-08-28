@@ -40,7 +40,8 @@ public class Title {
             prefixTitle(colorAndShadow("d2d2d2", "00000", "Ultimate ")).setPredicate(p -> p.getGameMode() == GameMode.ULTIMATE_IRONMAN).setUnlockDescription("Play as an Ultimate Ironman").ecoWorld(),
             prefixTitle(colorAndShadow("5e2121", "00000", "Hardcore ")).setPredicate(p -> p.getGameMode() == GameMode.HARDCORE_IRONMAN).setUnlockDescription("Play as a Hardcore Ironman").ecoWorld(),
             prefixTitle(colorAndShadow("b36b00", "00000", "JalYt ")).setPredicate(p -> p.zukKills.getKills() > 0).setUnlockDescription("Complete the Inferno minigame"),
-            prefixTitle(colorAndShadow("a01111", "00000", "Slayer Master ")).setPredicate(p-> p.slayerTasksCompleted > 50).setUnlockDescription("Complete 50 slayer tasks").ecoWorld()
+            prefixTitle(colorAndShadow("a01111", "00000", "Slayer MASTER ")).setPredicate(p-> p.slayerTasksCompleted > 50).setUnlockDescription("Complete 50 slayer tasks").ecoWorld(),
+            prefixTitle(colorAndShadow("c1a900", "00000", "Champion")).setPredicate(p -> p.tournamentWins >= 10).setUnlockDescription("Place first in 10 tournaments").ecoWorld()
     };
 
     public static String color(String color, String text) {
@@ -261,7 +262,7 @@ public class Title {
         DOCTOR("Doctor", -1, 10000),
         BARON("Baron", -1, 10000),
         OVERLORD("<col=a01111><shad=000000>Overlord</shad></col>", -1, 25000),
-        MASTER("Master", -1, 25000),
+        MASTER("MASTER", -1, 25000),
         THE_UNDEFEATED("The Undefeated", -1, 50000);
 
         private String title;

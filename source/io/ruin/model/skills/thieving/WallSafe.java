@@ -21,8 +21,7 @@ public class WallSafe {
             new LootItem(1621, 1, 50),      //emerald 1/10
             new LootItem(1619, 1, 33),      //ruby 1/15
             new LootItem(1617, 1, 16),      //diamond 1/30
-            new LootItem(1631, 1, 5),       //dragonstone 1/100
-            new LootItem(6571, 1, 1)        //onyx 1/500
+            new LootItem(1631, 1, 5)       //dragonstone 1/100
     );
 
     private static void attempt(Player player, GameObject wallSafe) {

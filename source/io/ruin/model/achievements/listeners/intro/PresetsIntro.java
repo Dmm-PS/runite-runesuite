@@ -1,7 +1,5 @@
 package io.ruin.model.achievements.listeners.intro;
 
-import io.ruin.cache.Color;
-import io.ruin.model.World;
 import io.ruin.model.achievements.Achievement;
 import io.ruin.model.achievements.AchievementListener;
 import io.ruin.model.achievements.AchievementStage;
@@ -10,7 +8,8 @@ import io.ruin.model.entity.player.PlayerCounter;
 
 import static io.ruin.model.achievements.Achievement.counterStage;
 
-public class PresetsIntro implements AchievementListener {
+public final class PresetsIntro implements AchievementListener {
+
     @Override
     public String name() {
         return "Presets";
@@ -23,7 +22,7 @@ public class PresetsIntro implements AchievementListener {
 
     @Override
     public String[] lines(Player player, boolean finished) {
-        return new String[]{
+        return new String[] {
                 Achievement.slashIf("Presets are a great way to speed up banking or save loadouts.", finished),
                 Achievement.slashIf("Open the Journal tab and click the <col=ff0000>red</col> icon to view your presets,", finished),
                 Achievement.slashIf("then click on a slot to create a custom preset. After the preset", finished),

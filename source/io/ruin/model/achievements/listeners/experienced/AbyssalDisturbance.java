@@ -7,7 +7,8 @@ import io.ruin.model.achievements.AchievementStage;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerCounter;
 
-public class AbyssalDisturbance implements AchievementListener {
+public final class AbyssalDisturbance implements AchievementListener {
+
     @Override
     public String name() {
         return "Abyssal Disturbance";
@@ -15,18 +16,19 @@ public class AbyssalDisturbance implements AchievementListener {
 
     @Override
     public AchievementStage stage(Player player) {
-        int amt = PlayerCounter.ABYSSAL_CREATURES_KC.get(player);
-        if (amt >= 200)
+        int amount = PlayerCounter.ABYSSAL_CREATURES_KC.get(player);
+        if (amount >= 200) {
             return AchievementStage.FINISHED;
-        else if (amt > 0)
+        } else if (amount > 0) {
             return AchievementStage.STARTED;
-        else
+        } else {
             return AchievementStage.NOT_STARTED;
+        }
     }
 
     @Override
     public String[] lines(Player player, boolean finished) {
-        return new String[]{
+        return new String[] {
                 Achievement.slashIf("Once dangers and threats, now found fodder..", finished),
                 "",
                 Achievement.slashIf("<col=000080>Assignment</col>: Kill 200 creatures in the abyss.", finished),

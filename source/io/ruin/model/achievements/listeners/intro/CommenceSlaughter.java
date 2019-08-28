@@ -1,13 +1,12 @@
 package io.ruin.model.achievements.listeners.intro;
 
-import io.ruin.cache.Color;
-import io.ruin.model.World;
 import io.ruin.model.achievements.Achievement;
 import io.ruin.model.achievements.AchievementListener;
 import io.ruin.model.achievements.AchievementStage;
 import io.ruin.model.entity.player.Player;
 
-public class CommenceSlaughter implements AchievementListener {
+public final class CommenceSlaughter implements AchievementListener {
+
     @Override
     public String name() {
         return "Commence Slaughter";
@@ -20,7 +19,7 @@ public class CommenceSlaughter implements AchievementListener {
 
     @Override
     public String[] lines(Player player, boolean finished) {
-        return new String[]{
+        return new String[] {
                 Achievement.slashIf("Completing Slayer tasks is a great way to train your combat stats", finished),
                 Achievement.slashIf("and start gaining some wealth.", finished),
                 "",

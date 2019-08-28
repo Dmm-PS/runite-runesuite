@@ -236,31 +236,31 @@ public class Mining {
         switch (ore) {
             case 436:
             case 438:
-//                player.getInventory().add(2349, 1);
+                player.getInventory().add(2349, 1);
                 player.getStats().addXp(StatType.Smithing, 2.5, true);
                 return true;
             case 440:
-//                player.getInventory().add(2351, 1);
+                player.getInventory().add(2351, 1);
                 player.getStats().addXp(StatType.Smithing, 5.0, true);
                 return true;
             case 442:
-//                player.getInventory().add(2355, 1);
+                player.getInventory().add(2355, 1);
                 player.getStats().addXp(StatType.Smithing, 5.5, true);
                 return true;
             case 444:
-//                player.getInventory().add(2357, 1);
+                player.getInventory().add(2357, 1);
                 player.getStats().addXp(StatType.Smithing, 9.0, true);
                 return true;
             case 447:
-//                player.getInventory().add(2359, 1);
+                player.getInventory().add(2359, 1);
                 player.getStats().addXp(StatType.Smithing, 12.0, true);
                 return true;
             case 449:
-//                player.getInventory().add(2361, 1);
+                player.getInventory().add(2361, 1);
                 player.getStats().addXp(StatType.Smithing, 15.0, true);
                 return true;
             case 451:
-//                player.getInventory().add(2362, 1);
+                player.getInventory().add(2362, 1);
                 player.getStats().addXp(StatType.Smithing, 20.0, true);
                 return true;
             default:

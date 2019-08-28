@@ -13,14 +13,14 @@ public enum PlayerGroup {
 
     /* Staff */
     OWNER(23, 28, 1),
-    COMMUNITY_MANAGER(28, 21, 127),
+    MANAGER(28, 21, 103),
     ADMINISTRATOR(3, 22, 124),
     DEVELOPER(13, 13, 1),
     DISCORD_MANAGER(26, 26, 125),
     ADVISOR(25, 23, 130),
     SENIOR_MODERATOR(17, 22, 28),
     MODERATOR(4, 24, 0),
-    SUPPORT(5, 25, 131),
+    SUPPORT(5, 25, 107),
 
     /* Special Accounts */
     YOUTUBER(15, 16, 29),

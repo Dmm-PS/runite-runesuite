@@ -63,7 +63,7 @@ public class MysteryBox {
 
             /* Uncommon */
             new LootItem(10551, 1, 15),
-            new LootItem(4152, 1, 15), // Abyssal Whip
+            new LootItem(4151, 1, 15), // Abyssal Whip
             new LootItem(4724, 1, 15),
             new LootItem(4728, 1, 15),
             new LootItem(4730, 1, 15),
@@ -80,8 +80,8 @@ public class MysteryBox {
             new LootItem(11824, 1, 15).broadcast(Broadcast.GLOBAL),
             new LootItem(12006, 1, 15).broadcast(Broadcast.GLOBAL),
             new LootItem(995, 20000000, 15).broadcast(Broadcast.GLOBAL),
-            new LootItem(11839, 1, 15).broadcast(Broadcast.GLOBAL),
-            new LootItem(11129, 1, 15).broadcast(Broadcast.GLOBAL),
+            new LootItem(11838, 1, 15).broadcast(Broadcast.GLOBAL),
+            new LootItem(11128, 1, 15).broadcast(Broadcast.GLOBAL),
 
 
             new LootItem(1050, 1, 1),
@@ -139,6 +139,9 @@ public class MysteryBox {
     }
 
     static {
+        for (Item item : MYSTERY_BOX_TABLE.allItems()) {
+            System.out.println(item.getId() + " " + item.getDef().descriptiveName);
+        }
         ItemAction.registerInventory(6199, "open", (player, item) -> {
             player.lock();
             player.closeDialogue();

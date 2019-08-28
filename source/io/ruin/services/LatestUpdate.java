@@ -8,8 +8,8 @@ import java.sql.Statement;
 
 public class LatestUpdate {
 
-    public static String LATEST_UPDATE_URL;
-    public static String LATEST_UPDATE_TITLE;
+    public static String LATEST_UPDATE_URL = "https://runite.io/forum/index.php?threads/update-6-grand-exchange-new-home-and-more.1069/";
+    public static String LATEST_UPDATE_TITLE = "Update #6 - Grand Exchange, New Home, and more!";
 
     public static void fetch() {
         Server.forumDb.execute(con -> {

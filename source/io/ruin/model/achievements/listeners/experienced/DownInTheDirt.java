@@ -6,7 +6,7 @@ import io.ruin.model.achievements.AchievementListener;
 import io.ruin.model.achievements.AchievementStage;
 import io.ruin.model.entity.player.Player;
 
-public class DownInTheDirt implements AchievementListener {
+public final class DownInTheDirt implements AchievementListener {
 
     @Override
     public String name() {
@@ -15,16 +15,18 @@ public class DownInTheDirt implements AchievementListener {
 
     @Override
     public AchievementStage stage(Player player) {
-        if(player.cleanedPaydirt == 0)
+        if (player.cleanedPaydirt == 0) {
             return AchievementStage.NOT_STARTED;
-        if(player.cleanedPaydirt < 250)
+        } else if (player.cleanedPaydirt < 250) {
             return AchievementStage.STARTED;
+        }
+
         return AchievementStage.FINISHED;
     }
 
     @Override
     public String[] lines(Player player, boolean finished) {
-        return new String[]{
+        return new String[] {
                 Achievement.slashIf("Not all opportunities present themselves as cleanly as others.", finished),
                 Achievement.slashIf("Sometimes you just gotta get down and dirty to see it.", finished),
                 "",

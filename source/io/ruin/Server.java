@@ -166,7 +166,7 @@ public class Server extends ServerWrapper {
                 }
             });
             Loggers.clearOnlinePlayers(World.id);
-            LatestUpdate.fetch();
+            // LatestUpdate.fetch();
             Giveaway.updateTotalAmount();
         }
 

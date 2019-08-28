@@ -10,7 +10,7 @@ import io.ruin.model.skills.farming.patch.PatchData;
 import java.util.Arrays;
 import java.util.List;
 
-public class MorytaniaFarming implements AchievementListener {
+public final class MorytaniaFarming implements AchievementListener {
 
     static {
         ItemAction.registerInventory(4251, "empty", (player, item) -> {
@@ -48,7 +48,7 @@ public class MorytaniaFarming implements AchievementListener {
 
     @Override
     public String[] lines(Player player, boolean finished) {
-        return new String[]{
+        return new String[] {
                 Achievement.slashIf("", finished), //TODO: Event message
                 "",
                 Achievement.slashIf("<col=000080>Assignment</col>: Harvest from any farming patch in Morytania.", finished),

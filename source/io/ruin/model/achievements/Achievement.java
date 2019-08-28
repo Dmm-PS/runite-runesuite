@@ -6,7 +6,9 @@ import io.ruin.model.achievements.listeners.experienced.*;
 import io.ruin.model.achievements.listeners.intro.CommenceSlaughter;
 import io.ruin.model.achievements.listeners.intro.Loyalty;
 import io.ruin.model.achievements.listeners.intro.TheBestiary;
+import io.ruin.model.achievements.listeners.intro.TournamentParticipant;
 import io.ruin.model.achievements.listeners.master.ExpertRunecrafter;
+import io.ruin.model.achievements.listeners.master.TournamentChampion;
 import io.ruin.model.achievements.listeners.novice.ImplingHunter;
 import io.ruin.model.achievements.listeners.novice.IntoTheAbyss;
 import io.ruin.model.achievements.listeners.novice.Lightness;
@@ -17,40 +19,35 @@ import io.ruin.model.inter.journal.JournalEntry;
 
 public enum Achievement {
 
-    /**
-     * Intro
-     */
-    THE_BESTIARY(new TheBestiary(), AchievementCategory.Introductory),
-    COMMENCE_SLAUGHTER(new CommenceSlaughter(), AchievementCategory.Introductory),
-    LOYALTY(new Loyalty(), AchievementCategory.Introductory),
-    //PRESETS(new PresetsIntro(), AchievementCategory.Introductory),
+    /* Intro */
+    THE_BESTIARY(new TheBestiary(), AchievementCategory.INTRODUCTORY),
+    COMMENCE_SLAUGHTER(new CommenceSlaughter(), AchievementCategory.INTRODUCTORY),
+    LOYALTY(new Loyalty(), AchievementCategory.INTRODUCTORY),
+    TOURNAMENT_PARTICIPANT(new TournamentParticipant(), AchievementCategory.INTRODUCTORY),
+    //PRESETS(new PresetsIntro(), AchievementCategory.INTRODUCTORY),
 
-    /**
-     * Novice
-     */
-    INTO_THE_ABYSS(new IntoTheAbyss(), AchievementCategory.Novice),
-    //MORYTANIA_FARMING(new MorytaniaFarming(), AchievementCategory.Novice),
-    LIGHTNESS(new Lightness(), AchievementCategory.Novice),
-    IMPLING_HUNTER(new ImplingHunter(), AchievementCategory.Novice),
+    /* Novice */
+    INTO_THE_ABYSS(new IntoTheAbyss(), AchievementCategory.NOVICE),
+    //MORYTANIA_FARMING(new MorytaniaFarming(), AchievementCategory.NOVICE),
+    LIGHTNESS(new Lightness(), AchievementCategory.NOVICE),
+    IMPLING_HUNTER(new ImplingHunter(), AchievementCategory.NOVICE),
 
-    /**
-     * Experienced
-     */
-    DOWN_IN_THE_DIRT(new DownInTheDirt(), AchievementCategory.Experienced),
-    ESSENCE_EXTRACTOR(new EssenceExtractor(), AchievementCategory.Experienced),
-    GOLDEN_TOUCH(new GoldenTouch(), AchievementCategory.Experienced),
-    NATURES_TOUCH(new NaturesTouch(), AchievementCategory.Experienced),
-    ABYSSAL_DISTURBANCE(new AbyssalDisturbance(), AchievementCategory.Experienced),
-    PRACTICE_MAKES_PERFECT(new PracticeMakesPerfect(), AchievementCategory.Experienced),
-    QUICK_HANDS(new QuickHands(), AchievementCategory.Experienced),
-    MY_ARMS_PATCH(new MyArmsPatch(), AchievementCategory.Experienced),
-    WELCOME_TO_THE_JUNGLE(new WelcomeToTheJungle(), AchievementCategory.Experienced),
-    DEMON_SLAYER(new DemonSlayer(), AchievementCategory.Experienced),
+    /* Experienced */
+    DOWN_IN_THE_DIRT(new DownInTheDirt(), AchievementCategory.EXPERIENCED),
+    ESSENCE_EXTRACTOR(new EssenceExtractor(), AchievementCategory.EXPERIENCED),
+    GOLDEN_TOUCH(new GoldenTouch(), AchievementCategory.EXPERIENCED),
+    NATURES_TOUCH(new NaturesTouch(), AchievementCategory.EXPERIENCED),
+    ABYSSAL_DISTURBANCE(new AbyssalDisturbance(), AchievementCategory.EXPERIENCED),
+    PRACTICE_MAKES_PERFECT(new PracticeMakesPerfect(), AchievementCategory.EXPERIENCED),
+    QUICK_HANDS(new QuickHands(), AchievementCategory.EXPERIENCED),
+    MY_ARMS_PATCH(new MyArmsPatch(), AchievementCategory.EXPERIENCED),
+    WELCOME_TO_THE_JUNGLE(new WelcomeToTheJungle(), AchievementCategory.EXPERIENCED),
+    DEMON_SLAYER(new DemonSlayer(), AchievementCategory.EXPERIENCED),
+    DEAD_OR_ALIVE(new DeadOrAlive(), AchievementCategory.EXPERIENCED),
 
-    /**
-     * Master
-     */
-    EXPERT_RUNECRAFTER(new ExpertRunecrafter(), AchievementCategory.Master);
+    /* Master */
+    EXPERT_RUNECRAFTER(new ExpertRunecrafter(), AchievementCategory.MASTER),
+    TOURNAMENT_CHAMPION(new TournamentChampion(), AchievementCategory.MASTER);
 
     private final AchievementListener listener;
     private final AchievementCategory category;
@@ -63,11 +60,11 @@ public enum Achievement {
     }
 
     public void update(Player player) {
-        if(entry == null) {
+        if (entry == null) {
             //never displayed on this world
             return;
         }
-        if(World.isPVP()) {
+        if (World.isPVP()) {
             return;
         }
         AchievementStage oldStage = player.achievementStages[ordinal()];
@@ -89,15 +86,16 @@ public enum Achievement {
             @Override
             public void send(Player player) {
                 AchievementStage stage = player.achievementStages[ordinal()] = getListener().stage(player);
-                if(player.journal != Journal.ACHIEVEMENTS) {
+                if (player.journal != Journal.ACHIEVEMENTS) {
                     return;
                 }
-                if(stage == AchievementStage.FINISHED)
+                if(stage == AchievementStage.FINISHED) {
                     send(player, getListener().name(), Color.GREEN);
-                else if(stage == AchievementStage.STARTED)
+                } else if(stage == AchievementStage.STARTED) {
                     send(player, getListener().name(), Color.YELLOW);
-                else
+                } else {
                     send(player, getListener().name(), Color.RED);
+                }
             }
             @Override
             public void select(Player player) {
@@ -114,10 +112,6 @@ public enum Achievement {
         return player.achievementStages[ordinal()] == AchievementStage.FINISHED;
     }
 
-    /**
-     * Misc
-     */
-
     public static String slashIf(String string, boolean slash) {
         return slash ? ("<str>" + string + "</str>") : string;
     }
@@ -131,17 +125,19 @@ public enum Achievement {
     }
 
     public static AchievementStage counterStage(int current, int start, int finish) {
-        if (current >= finish)
+        if (current >= finish) {
             return AchievementStage.FINISHED;
-        else if (current <= start)
+        } else if (current <= start) {
             return AchievementStage.NOT_STARTED;
+        }
+
         return AchievementStage.STARTED;
     }
 
     static {
         LoginListener.register(player -> {
             for (Achievement achievement : values()) {
-                player.achievementStages[achievement.ordinal()] = achievement.getListener().stage(player); // forces achievements to have the correct state on login
+                player.achievementStages[achievement.ordinal()] = achievement.getListener().stage(player); // Forces achievements to have the correct state on login
             }
         });
     }

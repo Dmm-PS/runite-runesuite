@@ -3,6 +3,7 @@ package io.ruin.model.item.containers;
 import io.ruin.cache.Color;
 import io.ruin.cache.ItemDef;
 import io.ruin.model.World;
+import io.ruin.model.achievements.Achievement;
 import io.ruin.model.activities.duelarena.DuelRule;
 import io.ruin.model.combat.RangedWeapon;
 import io.ruin.model.inter.Interface;
@@ -42,6 +43,12 @@ public class Equipment extends ItemContainer {
                 }
             }
         }
+
+        if ((selectedDef.id == 4081 || selectedDef.id == 12017) && !Achievement.DEAD_OR_ALIVE.isFinished(player)) {
+            player.sendMessage("You must complete the achievement <col=800000>Dead or Alive</col> before equipping that item.");
+            return;
+        }
+
         if(selectedDef.maxType && !MaxCape.unlocked(player)) {
             player.sendMessage("You don't have the required stats to wear this.");
             return;

@@ -24,6 +24,11 @@ public class Consumable {
      */
 
     static {
+        registerEat(10476, 3, p ->  {
+            p.getMovement().restoreEnergy(10);
+            p.sendFilteredMessage("You eat the purple sweet. It restores some run energy.");
+        });
+
         registerEat(1942, 1, p -> p.sendFilteredMessage("You eat the potato. Yuck!"));
         registerEat(1965, 1, p -> p.sendFilteredMessage("You eat the cabbage. Yuck!"));
 

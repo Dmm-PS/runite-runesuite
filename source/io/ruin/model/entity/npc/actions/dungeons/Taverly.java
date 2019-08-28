@@ -24,7 +24,7 @@ public class Taverly {
                                     new NPCDialogue(npc, "So if one of the Slayer Masters sent you to slay black dragons, that's fine, but otherwise " +
                                             "you should go and train elsewhere."),
                                     new NPCDialogue(npc, "I'd rather people didn't train on my dragons at all, but I've got a distant cousin who's a Slayer " +
-                                            "Master, so I've got to support the family business."),
+                                            "MASTER, so I've got to support the family business."),
                                     new PlayerDialogue("Oh, okay. I won't kill them unless Black Dragons are my task. Thanks!")
                             )),
                             new Option("Excuse me, I've got to go.", () -> player.dialogue(new PlayerDialogue("Excuse me, I've got to go.")))

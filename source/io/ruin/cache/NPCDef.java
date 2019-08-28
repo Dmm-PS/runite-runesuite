@@ -1,5 +1,6 @@
 package io.ruin.cache;
 
+import com.google.common.collect.ImmutableSet;
 import io.ruin.Server;
 import io.ruin.api.buffer.InBuffer;
 import io.ruin.api.filestore.IndexFile;
@@ -49,6 +50,23 @@ public class NPCDef {
         return LOADED[id];
     }
 
+    private static final ImmutableSet UNDEAD_MONSTERS = ImmutableSet.of(
+            26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 6596, 6597, 6598, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 3980, 3981, 2501, 2502, 2503, // Zombie
+            924, 74, 75, 76, 70, 71, 72, 73, 3565, 3972, 3973, 3974, 7265, 130, 77, 78, 79, 80, 81, 6444, 6446, 82, 83, 2521, 2522, 2523, 2520, 1685, 1686, 1687, 1688, 6442, 2524, 2525, 2526, // Skeleton
+            85, 3975, 6815, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 3976, 3977, 3978, 3979, 6816, 6817, 6818, 6819, 6820, 6821, 6822, 7263, 7264, 5370, 2527, 2528, 2529, 2530, // Ghost
+            2514, 2517, // Ankou
+            949, 950, 951, 952, 953, 7658, 7659, 7660, 7661, 7662, 717, 720, 721, 722, 723, 725, 726, 727, 728, // Mummy
+            448, 449, 451, 452, 453, 454, 456, 457, // Crawling hand
+            2, 3, 4, 5, 6, 7, // Aberrant spectre
+            7402, // Abhorrent spectre
+            7279, // Deviant spectre
+            6611, // Vet'ion
+            7604, 7605, 7606, // Skeletal mystic
+            7934, 7938, 7936, 7940, 7935, 7939, 7937, 7932, // Revenants
+            8059, 8061, // Vortkath
+            8063 // Zombified spawn
+    );
+
 
     /**
      * Custom data
@@ -87,6 +105,8 @@ public class NPCDef {
     public boolean dragon;
 
     public boolean demon;
+
+    public boolean undead;
 
     public boolean ignoreMultiCheck = false;
 
@@ -331,6 +351,7 @@ public class NPCDef {
         flightClipping = name.toLowerCase().contains("impling") || name.toLowerCase().contains("butterfly");
         dragon = name.toLowerCase().contains("dragon") || name.equalsIgnoreCase("elvarg") || name.equalsIgnoreCase("wyrm") || name.equalsIgnoreCase("drake") || name.toLowerCase().contains("hydra") || name.toLowerCase().contains("great olm");
         demon = name.toLowerCase().contains("demon") || name.equalsIgnoreCase("skotizo") || name.equalsIgnoreCase("imp") || name.toLowerCase().contains("nechryael") || name.toLowerCase().contains("abyssal sire") || name.toLowerCase().contains("k'ril") || name.toLowerCase().contains("balfrug") || name.toLowerCase().contains("tstanon") || name.toLowerCase().contains("zakl'n");
+        undead = UNDEAD_MONSTERS.contains(id);
     }
 
     void method4514(InBuffer var1, int var2) {

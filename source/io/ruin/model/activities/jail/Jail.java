@@ -108,7 +108,7 @@ public class Jail {
             player.jailOresAssigned = player.jailOresCollected = 0;
             player.teleportListener = null;
             player.deathEndListener = null;
-            player.getMovement().teleport(3092, 3494, 0);
+            player.getMovement().teleport(3096, 3487, 0);
             player.sendMessage(Color.OLIVE.tag() + "Your jail sentence is up.");
         });
     }

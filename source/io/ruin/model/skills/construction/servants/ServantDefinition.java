@@ -74,44 +74,44 @@ public enum ServantDefinition {
     }
 
     public String getItemFoundLine() {
-        return this == DEMON_BUTLER ? demonify("Master, I have returned with what you asked me to retrieve.") : "Here you go.";
+        return this == DEMON_BUTLER ? demonify("MASTER, I have returned with what you asked me to retrieve.") : "Here you go.";
     }
 
     public String getTooManyItemsRequestedLine() {
-        return this == DEMON_BUTLER ? demonify("Master, I dearly wish that I could perform your instruction in full, but alas, I can only carry 26 items.") : "Sorry, I can only carry " + itemCapacity + " items.";
+        return this == DEMON_BUTLER ? demonify("MASTER, I dearly wish that I could perform your instruction in full, but alas, I can only carry 26 items.") : "Sorry, I can only carry " + itemCapacity + " items.";
     }
 
     public String getInventoryFullLine(int amount) {
-        return this == DEMON_BUTLER ? demonify("Master, I have returned with what thou asked me to retrieve. As I see thy inventory is full, I shall wait with these " + amount + " items until thou art ready.") : "I've returned with your items. Your inventory is full, so I'll hold on to these " + amount + " items until you have some free space.";
+        return this == DEMON_BUTLER ? demonify("MASTER, I have returned with what thou asked me to retrieve. As I see thy inventory is full, I shall wait with these " + amount + " items until thou art ready.") : "I've returned with your items. Your inventory is full, so I'll hold on to these " + amount + " items until you have some free space.";
     }
 
     public String getStillHaveItemsLine(int amount) {
-        return this == DEMON_BUTLER ? demonify("Master, I am still carrying " + amount + " of thy items. Thou must take them before I may perform another service.") : "I'm still holding " + amount + " of your items, please free up some space.";
+        return this == DEMON_BUTLER ? demonify("MASTER, I am still carrying " + amount + " of thy items. Thou must take them before I may perform another service.") : "I'm still holding " + amount + " of your items, please free up some space.";
     }
 
     public String getAgreeLine() {
-        return this == DEMON_BUTLER ? demonify("Very well, Master.") : "As you wish.";
+        return this == DEMON_BUTLER ? demonify("Very well, MASTER.") : "As you wish.";
     }
 
     public String getPaymentRequiredLine() {
-        return this == DEMON_BUTLER ? demonify("Master, I must humbly request payment for mine services.") : "I will need you to pay for my services before I can continue.";
+        return this == DEMON_BUTLER ? demonify("MASTER, I must humbly request payment for mine services.") : "I will need you to pay for my services before I can continue.";
     }
 
     public String getThankYouLine() {
-        return this == DEMON_BUTLER ? demonify("Thank you, Master.") : "Thank you.";
+        return this == DEMON_BUTLER ? demonify("Thank you, MASTER.") : "Thank you.";
     }
 
     public String getNeedMoneyForSawmillLine() {
-        return this == DEMON_BUTLER ? demonify("Master, I will require coins to compensate the sawmill operator.") : "I'll need some money to pay the sawmill operator.";
+        return this == DEMON_BUTLER ? demonify("MASTER, I will require coins to compensate the sawmill operator.") : "I'll need some money to pay the sawmill operator.";
     }
 
 
     public String getDepositExplainLine() {
-        return this == DEMON_BUTLER ? demonify("Master, use whatever thou desire be taken to storage on myself and I shall transport it") : "Use the item on me and I'll take it to the bank.";
+        return this == DEMON_BUTLER ? demonify("MASTER, use whatever thou desire be taken to storage on myself and I shall transport it") : "Use the item on me and I'll take it to the bank.";
     }
 
     public String getBankFullLine() {
-        return this == DEMON_BUTLER ? demonify("Master, I have failed to safely store thy items, as thy storage is currently at maximum capacity.") : "I couldn't deposit all of your items, as your bank is full.";
+        return this == DEMON_BUTLER ? demonify("MASTER, I have failed to safely store thy items, as thy storage is currently at maximum capacity.") : "I couldn't deposit all of your items, as your bank is full.";
     }
 
     public static String demonify(String text) {

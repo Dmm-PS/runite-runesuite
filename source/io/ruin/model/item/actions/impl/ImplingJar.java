@@ -1,6 +1,7 @@
 package io.ruin.model.item.actions.impl;
 
 import io.ruin.api.utils.Random;
+import io.ruin.model.activities.cluescrolls.ClueType;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.item.Item;
 import io.ruin.model.item.actions.ItemAction;
@@ -215,8 +216,8 @@ public enum ImplingJar {
             new LootItem(5300, 6, 3),         //Snapdragon seed
             new LootItem(7219, 15, 3),        //Summer pie
             new LootItem(4093, 1, 3)          //Clue scroll (elite)
-
-    ));
+    )),
+    LUCKY_IMPLING_JAR(19732, null);
 
     private final int itemId;
     private final LootTable lootTable;
@@ -237,13 +238,20 @@ public enum ImplingJar {
             } else {
                 item.setId(IMPLING_JAR);
             }
-            player.getInventory().add(jar.lootTable.rollItem());
+            if (jar == LUCKY_IMPLING_JAR) {
+                ClueType[] clueTypes = ClueType.values();
+                ClueType clueType = Random.get(clueTypes);
+                LootItem lootItem = Random.get(clueType.loots);
+                player.getInventory().add(lootItem.toItem());
+            } else {
+                player.getInventory().add(jar.lootTable.rollItem());
+            }
             player.unlock();
         });
     }
 
     static {
-        for(ImplingJar jar : ImplingJar.values()) {
+        for (ImplingJar jar : ImplingJar.values()) {
             ItemAction.registerInventory(jar.itemId, "loot", (player, item) -> loot(player, item, jar));
         }
     }

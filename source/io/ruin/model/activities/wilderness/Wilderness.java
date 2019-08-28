@@ -145,7 +145,7 @@ public class Wilderness {
                 p.sendMessage(Color.DARK_RED.wrap("You can only have 2 accounts inside the wilderness at a time."));
                 p.publicSound(200);
                 e.delay(3);
-                p.getMovement().teleport(3092, 3494, 0);
+                p.getMovement().teleport(3096, 3487, 0);
                 p.animate(-1);
                 p.unlock();
             });

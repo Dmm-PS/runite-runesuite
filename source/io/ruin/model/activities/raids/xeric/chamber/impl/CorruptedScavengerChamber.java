@@ -18,22 +18,20 @@ import io.ruin.model.map.object.GameObject;
 import io.ruin.model.map.object.actions.ObjectAction;
 import io.ruin.model.stat.StatType;
 
-public class CorruptedScavengerChamber extends Chamber {
-
-
+public final class CorruptedScavengerChamber extends Chamber {
 
     private enum ChestType {
         POISON(29743),
         HATCHING(29744),
         HATCHED(29745),
         BATS(29743),
-        EMPTY(29743),
-        ;
-        private int objId;
+        EMPTY(29743);
+
+        private final int objId;
+
         ChestType(int objId) {
             this.objId = objId;
         }
-
     }
 
     private static final int[][] scavengerSpawns = {
@@ -64,15 +62,18 @@ public class CorruptedScavengerChamber extends Chamber {
 
     private GameObject trough;
     private int grubs = 0;
-
+    private boolean completed = false;
 
     static {
         ObjectAction.register(CLOSED_CHEST, 1, (player, obj) -> {
             player.startEvent(event -> {
                 player.lock();
+                player.face(obj);
                 while (true) {
-                    if (obj.id != CLOSED_CHEST)
-                        return;
+                    if (obj.id != CLOSED_CHEST) {
+                        player.unlock();
+                        break;
+                    }
                     player.animate(832);
                     if (Random.get() > (player.getStats().get(StatType.Thieving).currentLevel / 2.0 / 100.0)) {
                         event.delay(3);
@@ -184,7 +185,9 @@ public class CorruptedScavengerChamber extends Chamber {
         if (trough.id == EMPTY_TROUGH)
             trough.setId(FILLED_TROUGH);
         player.sendMessage("You deposit the cave grubs in the trough.");
-        ChambersOfXeric.addPoints(player, grubs * 50);
+        if (!completed) {
+            ChambersOfXeric.addPoints(player, grubs * 50);
+        }
     }
 
     private void death(NPC npc) {
@@ -196,12 +199,15 @@ public class CorruptedScavengerChamber extends Chamber {
         npc.startEvent(event -> {
             Position pos = getPosition(deathLocations[getLayout()][0], deathLocations[getLayout()][1]);
             npc.stepAbs(pos.getX(), pos.getY(), StepType.NORMAL);
+            System.out.println("boutta call wait for movement");
             event.waitForMovement(npc);
+            System.out.println("it got out");
             event.delay(1);
             npc.animate(7497);
             npc.forceText("Yawwwwwwwn!");
             event.delay(3);
             npc.transform(SLEEPING_SCAVENGER);
         });
+        completed = true;
     }
 }

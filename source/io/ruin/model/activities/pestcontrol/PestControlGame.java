@@ -1,5 +1,6 @@
 package io.ruin.model.activities.pestcontrol;
 
+import io.ruin.Server;
 import io.ruin.api.utils.Random;
 import io.ruin.cache.NPCDef;
 import io.ruin.data.impl.npcs.npc_combat;
@@ -14,6 +15,7 @@ import io.ruin.model.entity.shared.listeners.HitListener;
 import io.ruin.model.entity.shared.listeners.LogoutListener;
 import io.ruin.model.inter.InterfaceType;
 import io.ruin.model.inter.dialogue.NPCDialogue;
+import io.ruin.model.inter.utils.Config;
 import io.ruin.model.map.Position;
 import io.ruin.model.map.dynamic.DynamicMap;
 
@@ -34,7 +36,7 @@ public final class PestControlGame {
 
     private List<Player> players;
 
-    private final PestControlLanderDifficulty landerDifficulty;
+    private final PestControlLander lander;
 
     private DynamicMap map;
 
@@ -42,29 +44,21 @@ public final class PestControlGame {
     private NPC voidKnight = new NPC(2950);
 
     private final HashMap<PestControlPortal, NPC> portals = new LinkedHashMap<>();
+    private final HashMap<PestControlPortal, PestControlPortalStatus> statuses = new LinkedHashMap<>();
 
-    //The number of cycles before the game ends.
-    private final int DEFAULT_GAME_CYCLES = 2000;
-
-
-    private int gameCycle = DEFAULT_GAME_CYCLES;
-
-
-    /**
-     * The number of cycles between each spinner effect process.
-     */
     private final int SPINNER_EFFECT_INTERVAL = 12;
 
     private int minutesRemaining = 20;
 
-    PestControlGame(List<Player> players, PestControlLanderDifficulty landerDifficulty) {
+    PestControlGame(List<Player> players, PestControlLander lander) {
         this.players = players;
-        this.landerDifficulty = landerDifficulty;
+        this.lander = lander;
         map = new DynamicMap().build(10536, 1);
         players.forEach(player -> {
             map.assignListener(player).onExit((p, logout) -> {
                 player.deathEndListener = null;
                 player.pestControlParticipation = 0;
+                player.logoutListener = null;
                 player.closeInterface(InterfaceType.PRIMARY_OVERLAY);
                 players.remove(player);
             });
@@ -80,10 +74,7 @@ public final class PestControlGame {
     public void start() {
         initEnvironment();
         players.forEach(player -> {
-
             player.getPacketSender().setHidden(408, 12, true);
-
-
             player.pestControlParticipation = 0;
             player.getMovement().teleport(map.convertPosition(START));
             player.openInterface(InterfaceType.PRIMARY_OVERLAY, 408);
@@ -95,12 +86,13 @@ public final class PestControlGame {
         initialInterface();
 
         map.addEvent(event -> {
-            while(true) {
-                if(players.isEmpty())
+            while (true) {
+                if (players.isEmpty())
                     endGame(null);
                 event.delay(1);
             }
         });
+
         map.addEvent(event -> {
             while (true) {
                 spinnerHeal();
@@ -128,16 +120,23 @@ public final class PestControlGame {
         def.combatInfo.defend_animation = -1;
         def.combatInfo.spawn_animation = -1;
         def.ignoreMultiCheck = true;
-        voidKnight.hitListener = new HitListener().preDamage(hit ->{
-            if(hit.attacker.player != null)
+        voidKnight.hitListener = new HitListener().postDamage(hit -> {
+            if (hit.attacker == null) {
+                Server.logError(new Throwable("Why does this happen!?!?!?!?"));
+                return;
+            }
+
+            if (hit.attacker.player != null) {
                 hit.block();
+            }
+
+            players.forEach(player -> {
+                player.getPacketSender().sendString(408, 7, "" + voidKnight.getHp());
+            });
         });
-        voidKnight.hitListener = new HitListener().postDamage(hit ->
-                players.forEach(player ->
-                        player.getPacketSender().sendString(408, 7, "" + voidKnight.getHp())));
 
         voidKnight.deathEndListener = (DeathListener.Simple) () -> World.startEvent(event -> {
-           event.delay(2);
+            event.delay(2);
             endGame(PestControlEndPolicy.KNIGHT_PERISHED);
         });
         voidKnight.spawn(map.convertPosition(VOID_KNIGHT_POSITION));
@@ -150,10 +149,9 @@ public final class PestControlGame {
     private void initPortals() {
         // Todo fix this method.
         for (PestControlPortal portal : PestControlPortal.VALUES) {
-            NPC npc = new NPC(portal.getShieldedNpcId()).spawn(map.convertPosition(portal.getPosition()));
-            portal.setStatus(PestControlPortalStatus.SHIELDED);
+            NPC npc = new NPC(portal.npcId).spawn(map.convertPosition(portal.position));
             portals.put(portal, npc);
-            //portals.put(portal, PestControlPortalStatus.SHIELDED);
+            statuses.put(portal, PestControlPortalStatus.SHIELDED);
             map.addNpc(npc);
         }
 
@@ -173,64 +171,61 @@ public final class PestControlGame {
     }
 
     private void deactivatePortalShield(PestControlPortal portal) {
-        String message = "The " + portal.getName() + ", " + portal.getColor() + " portal shield has dropped!";
+        String message = "The " + portal.name + ", " + portal.color + " portal shield has dropped!";
         voidKnight.forceText(message);
         players.forEach(player -> player.sendMessage(message));
-        Optional<NPC> shieldedPortal = map.getNpcs().stream().filter(npc -> npc.getId() == portal.getShieldedNpcId()).findFirst();
-        portal.setStatus(PestControlPortalStatus.UNSHIELDED);
+        Optional<NPC> shieldedPortal = map.getNpcs().stream().filter(npc -> npc.getId() == portal.npcId).findFirst();
+        statuses.replace(portal, PestControlPortalStatus.UNSHIELDED);
         shieldedPortal.ifPresent(npc -> { //TODO this should just transform
-            map.removeNpc(npc);
-            npc.remove();
-            NPC unshielded = new NPC(portal.getUnshieldedNpcId());
-            NPCDef def = unshielded.getDef();
-            def.combatHandlerClass = PassiveCombat.class;
-            def.combatInfo = new npc_combat.Info();
-            def.combatInfo.hitpoints = landerDifficulty.getPortalHitpoints();
-            def.ignoreMultiCheck = true;
-            def.combatInfo.defend_animation = -1;
-            def.combatInfo.spawn_animation = -1;
-            unshielded.spawn(map.convertPosition(portal.getPosition()));
-            map.addNpc(unshielded);
-            portals.replace(portal, unshielded);
-            unshielded.hitListener = new HitListener().postDamage(hit -> {
-                players.forEach(player -> player.getPacketSender().sendString(408, portal.getHealthChildId(), "" + unshielded.getHp()));
-                Player player = hit.attacker.player;//can't use the method because it'll overwrite the original hit listener
-                        if(player != null) {
-                            player.pestControlParticipation += hit.damage;
-                            String str = (player.pestControlParticipation >= 100 ? "<col=5ebb29>": "<col=ff3333>") + player.pestControlParticipation+" </col>";
-                            player.getPacketSender().sendString(408, 8, str);
-                        }
-                    });
-            unshielded.deathEndListener = (DeathListener.Simple) () -> {
-                map.removeNpc(unshielded);
-                portal.setStatus(PestControlPortalStatus.DEAD);
-//                portals.replace(portal, PestControlPortalStatus.DEAD);
+//            map.removeNpc(npc);
+//            npc.remove();
+//            NPC unshielded = new NPC(portal.getUnshieldedNpcId());
+//            unshielded.spawn(map.convertPosition(portal.getPosition()));
+//            map.addNpc(unshielded);
+            npc.transform(portal.npcId - 4);
+            portals.replace(portal, npc);
+            npc.hitListener = new HitListener().postDamage(hit -> {
+                if (hit.attacker == null || hit.attacker.player == null) {
+                    Server.logError(new Throwable("Why does this happen!?!?!?!? in shield one"));
+                    return;
+                }
+
+                players.forEach(player -> player.getPacketSender().sendString(408, portal.healthChildId, "" + npc.getHp()));
+
+                Player player = hit.attacker.player;
+                if (player != null) {
+                    player.pestControlParticipation += hit.damage;
+                    String str = (player.pestControlParticipation >= 100 ? "<col=5ebb29>" : "<col=ff3333>") + player.pestControlParticipation + " </col>";
+                    player.getPacketSender().sendString(408, 8, str);
+                }
+            });
+            npc.deathEndListener = (DeathListener.Simple) () -> {
+                map.removeNpc(npc);
+                statuses.replace(portal, PestControlPortalStatus.DEAD);
                 if (checkPortalDeaths()) {
                     endGame(PestControlEndPolicy.WIN);
                 }
                 voidKnight.incrementHp(50); // Each portal death heals the Void Knight
             };
         });
-        players.forEach(player -> player.getPacketSender().setHidden(408, portal.getShieldIconChildId(), true));
 
+        players.forEach(player -> player.getPacketSender().setHidden(408, portal.shieldIconChildId, true));
     }
 
     private void spawnPests(PestControlPortal portal) {
         map.addEvent(event -> {
             while (true) {
-                if (portal.getStatus() == PestControlPortalStatus.DEAD) {
-                    break;
-                }
+                event.setCancelCondition(() -> statuses.get(portal) == PestControlPortalStatus.DEAD);
                 int id = Random.get(PestType.VALUES).random();
                 NPC pest = new NPC(id);
                 try {
                     pest.set("pest_control", this);
-                    pest.spawn(map.convertPosition(portal.getPestSpawnPosition()));
+                    pest.spawn(map.convertPosition(portal.pestSpawnPosition));
                     map.addNpc(pest);
                     pest.getCombat().setAllowRespawn(false);
                     registerHitListener(pest);
-                }catch (Exception e) {
-                    System.err.println("Error spawning npc: "+id);
+                } catch (Exception e) {
+                    System.err.println("Error spawning npc: " + id);
                 }
                 event.delay(20); // Not sure about the spawn rate; consider changing this
             }
@@ -238,11 +233,16 @@ public final class PestControlGame {
     }
 
     private void registerHitListener(NPC npc) {
-        npc.hitListener = new HitListener().postDamage(hit->{
+        npc.hitListener = new HitListener().postDamage(hit -> {
+            if (hit.attacker == null) {
+                Server.logError(new Throwable("Why does this happen!?!?!?!?"));
+                return;
+            }
+
             Player player = hit.attacker.player;
-            if(player != null) {
+            if (player != null) {
                 player.pestControlParticipation += hit.damage;
-                String str = (player.pestControlParticipation >= 100 ? "<col=5ebb29>": "<col=ff3333>") + player.pestControlParticipation+" </col>";
+                String str = (player.pestControlParticipation >= 100 ? "<col=5ebb29>" : "<col=ff3333>") + player.pestControlParticipation + " </col>";
                 player.getPacketSender().sendString(408, 8, str);
             }
         });
@@ -250,24 +250,19 @@ public final class PestControlGame {
 
     private void spinnerHeal() {
         portals.forEach((pestControlPortal, npc) -> {
-            if(pestControlPortal.getStatus() == PestControlPortalStatus.UNSHIELDED) {
-                for(NPC pest : npc.localNpcs()) {
-                    if(pest.getDef().name.equals("Spinner")) {
-                        if(npc.getHp() == 200)
+            if (statuses.get(pestControlPortal) == PestControlPortalStatus.UNSHIELDED) {
+                for (NPC pest : npc.localNpcs()) {
+                    if (pest.getDef().name.equals("Spinner")) {
+                        if (npc.getHp() == 200)
                             continue;
-                        if(npc.getHp() + 25 > 200) {
+                        if (npc.getHp() + 25 > 200) {
                             npc.incrementHp(200 - npc.getHp());
                         } else
-                        npc.incrementHp(25);
+                            npc.incrementHp(25);
                     }
                 }
             }
         });
-    }
-
-    private int randomPest() {
-        PestType type = Random.get(PestType.VALUES);
-        return type.random();
     }
 
     private void refreshTimer() {
@@ -278,19 +273,22 @@ public final class PestControlGame {
         players.forEach(player -> {
             player.getPacketSender().sendString(408, 6, minutesRemaining + " min");
             player.getPacketSender().sendString(408, 7, "" + voidKnight.getHp());
-            for(int i = 23; i < 27; i++) {
+            for (int i = 23; i < 27; i++) {
                 player.getPacketSender().sendString(408, i, "200");
             }
         });
     }
 
     private void endGame(PestControlEndPolicy pestControlEndPolicy) {
+        if (pestControlEndPolicy == null) {
+            Server.logError(new Throwable("Game ended with policy of null"));
+        }
         players.forEach(player -> {
             player.getMovement().teleport(EXIT);
             switch (pestControlEndPolicy) {
                 case WIN:
-                    if(player.pestControlParticipation >= 200) {
-                        int points = landerDifficulty.getPointsPerWin() + getAdditionalPoints(player);
+                    if (player.pestControlParticipation >= 100) {
+                        int points = lander.pointsPerWin + getAdditionalPoints(player);
                         player.dialogue(new NPCDialogue(1771,
                                 "Congratulations! You managed to destroy all the portals!" +
                                         " We've awarded you " + points + " " +
@@ -302,19 +300,24 @@ public final class PestControlGame {
                                 "You did not do enough damage on the monsters" +
                                         "To get a reward! Try harder next time."));
                     }
-                break;
+                    break;
                 case TIME_OUT:
-                    player.dialogue(new NPCDialogue(1771,
-                            "The time has ran out and the game finished!"));
+                    player.dialogue(new NPCDialogue(1771,"The time has ran out and the game finished!"));
                     break;
                 case KNIGHT_PERISHED:
-                    player.dialogue(new NPCDialogue(1771,
-                            "The Void Knight has perished, and all hope has beeen lost."));
+                    player.dialogue(new NPCDialogue(1771,"The Void Knight has perished, and all hope has been lost."));
                     break;
             }
+
             player.deathEndListener = null;
+            player.logoutListener = null;
             player.pestControlParticipation = 0;
-            player.getStats().restore(true);
+            player.getStats().restore(false);
+            player.getPrayer().deactivateAll();
+            player.getMovement().restoreEnergy(100);
+            Config.SPECIAL_ENERGY.set(player, 1000);
+            player.cureVenom(0);
+
         });
         dispose();
     }
@@ -330,8 +333,7 @@ public final class PestControlGame {
     }
 
     private boolean checkPortalDeaths() {
-  return  portals.entrySet().stream().allMatch(pestControlPortalNPCEntry -> pestControlPortalNPCEntry.getKey().getStatus() == PestControlPortalStatus.DEAD);
-//        return portals.values().stream().allMatch(status -> status == PestControlPortalStatus.DEAD);
+        return statuses.values().stream().allMatch(status -> status == PestControlPortalStatus.DEAD);
     }
 
     private int getAdditionalPoints(Player player) {
@@ -343,7 +345,7 @@ public final class PestControlGame {
             return 3;
         } else if (player.isGroup(PlayerGroup.EXTREME_DONATOR)) {
             return 2;
-        } else if (player.isGroup(PlayerGroup.SUPER_DONATOR) || player.isGroup(PlayerGroup.DONATOR) ) {
+        } else if (player.isGroup(PlayerGroup.SUPER_DONATOR) || player.isGroup(PlayerGroup.DONATOR)) {
             return 1;
         }
         return 0;

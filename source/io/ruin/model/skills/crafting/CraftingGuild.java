@@ -36,7 +36,7 @@ public class CraftingGuild {
                 GameObject opened = GameObject.spawn(1539, 2933, 3288, 0, obj.type, 0);
                 obj.skipClipping(true).remove();
                 if(player.getAbsY() >= 3289)
-                    player.dialogue(new NPCDialogue(5810, "Welcome to the Guild of Master Craftsmen."));
+                    player.dialogue(new NPCDialogue(5810, "Welcome to the Guild of MASTER Craftsmen."));
                 player.step(0, player.getAbsY() >= 3289 ? -1 : 1, StepType.FORCE_WALK);
                 event.delay(2);
                 obj.restore().skipClipping(false);

@@ -46,7 +46,7 @@ public class MaxCape {
     public static boolean unlocked(Player player) {
         if(World.isPVP())
             return player.getStats().total99s >= 9;
-        return player.getStats().total99s >= 9;
+        return player.getStats().total99s >= 23;
     }
 
     public enum MaxCapes {

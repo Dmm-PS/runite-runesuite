@@ -13,7 +13,7 @@ public class TwiggyOKorn {
     static {
         NPCAction.register(5527, "talk-to", (player, npc) -> player.dialogue(
                 new PlayerDialogue("Hello, what are you?").action(() -> npc.faceTemp(player)),
-                new NPCDialogue(npc, "Hi there, my name is Twiggy O'Korn and I'm the Master of Achievements here at " + World.type.getWorldName() + "."),
+                new NPCDialogue(npc, "Hi there, my name is Twiggy O'Korn and I'm the MASTER of Achievements here at " + World.type.getWorldName() + "."),
                 new OptionsDialogue(
                         new Option("What is an achievement?", () -> player.dialogue(
                                 new PlayerDialogue("What is an achievement?").animate(554),

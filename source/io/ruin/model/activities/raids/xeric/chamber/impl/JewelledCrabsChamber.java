@@ -111,6 +111,7 @@ public class JewelledCrabsChamber extends Chamber {
         for (int i = 0; i < 4; i++) { // spawn crabs
             NPC crab = spawnNPC(7576, crabSpawns[getLayout()][i][0], crabSpawns[getLayout()][i][1], Direction.SOUTH, 3);
             crab.attackBounds = new Bounds(crab.getSpawnPosition(), 16);
+            crab.getCombat().setAllowRespawn(false);
             crabs.add(crab);
         }
         NPC energy = spawnNPC(7580, startingPositions[getLayout()][0], startingPositions[getLayout()][1], directions[startingDirections[getLayout()]], 0);

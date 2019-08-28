@@ -29,7 +29,7 @@ public class Horvik {
     
     static {
 
-        //SpawnListener.register(HORVIK, npc -> npc.skipReachCheck = p -> p.equals(3074, 3494));
+        SpawnListener.register(HORVIK, npc -> npc.skipReachCheck = p -> p.equals(3076, 3494));
         
         
         /**

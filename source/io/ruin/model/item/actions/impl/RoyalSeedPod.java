@@ -21,7 +21,7 @@ public class RoyalSeedPod {
                 event.delay(3);
                 Position override = HomeTeleport.getHomeTeleportOverride(player);
                 if (override == null) {
-                    player.getMovement().teleport(3092, 3494, 0);
+                    player.getMovement().teleport(3096, 3487, 0);
                 } else {
                     player.getMovement().teleport(override);
                 }

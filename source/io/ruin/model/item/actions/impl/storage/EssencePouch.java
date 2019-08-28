@@ -112,16 +112,21 @@ public enum EssencePouch {
         int intercepted = 0;
         for (Map.Entry<EssencePouch, Integer> entry : player.runeEssencePouches.entrySet()) {
             EssencePouch pouch = entry.getKey();
-            if (!player.getInventory().contains(pouch.getItemId(), 1))
+            if (!player.getInventory().contains(pouch.getItemId(), 1)) {
                 continue;
+            }
             int spaceInPouch = pouch.capacity - entry.getValue();
             int withdraw = Math.min(Math.min(item.getAmount(), amount), spaceInPouch);
             if (withdraw > 0) {
                 intercepted += withdraw;
                 entry.setValue(entry.getValue() + withdraw);
-                player.sendFilteredMessage("You withdraw " + withdraw + " essence directly into your " + pouch.toString().toLowerCase().replace("_", " ") + ".");
-                if (intercepted == amount)
+                if (player.getBank().contains(item.getId(), intercepted)) {
+                    player.getBank().remove(item.getId(), intercepted);
+                    player.sendFilteredMessage("You withdraw " + withdraw + " essence directly into your " + pouch.toString().toLowerCase().replace("_", " ") + ".");
+                }
+                if (intercepted == amount) {
                     return intercepted;
+                }
             }
         }
         return intercepted;

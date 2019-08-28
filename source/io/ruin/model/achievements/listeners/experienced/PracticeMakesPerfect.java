@@ -6,7 +6,7 @@ import io.ruin.model.achievements.AchievementListener;
 import io.ruin.model.achievements.AchievementStage;
 import io.ruin.model.entity.player.Player;
 
-public class PracticeMakesPerfect implements AchievementListener {
+public final class PracticeMakesPerfect implements AchievementListener {
 
     @Override
     public String name() {
@@ -15,16 +15,18 @@ public class PracticeMakesPerfect implements AchievementListener {
 
     @Override
     public AchievementStage stage(Player player) {
-        if(player.cookedFood == 0)
+        if (player.cookedFood == 0) {
             return AchievementStage.NOT_STARTED;
-        if(player.cookedFood < 1000)
+        } else if (player.cookedFood < 1000) {
             return AchievementStage.STARTED;
+        }
+
         return AchievementStage.FINISHED;
     }
 
     @Override
     public String[] lines(Player player, boolean finished) {
-        return new String[]{
+        return new String[] {
                 Achievement.slashIf("A growing mastery for the skill, a lesson is learned by grabbing", finished),
                 Achievement.slashIf("one too many hot pans with uncovered hands.", finished),
                 "",

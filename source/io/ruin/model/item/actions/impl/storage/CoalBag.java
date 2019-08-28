@@ -75,11 +75,15 @@ public class CoalBag {
         if (!player.getInventory().contains(COAL_BAG, 1))
             return 0;
         int intercept = Math.min(Math.min(getBagSize(player) - player.baggedCoal, item.getAmount()), amount);
-        player.baggedCoal += intercept;
-        player.sendFilteredMessage("You withdraw " + intercept + " coal directly to your coal bag.");
+        if (intercept > 0) {
+            if (player.getBank().contains(item.getId(), intercept)) {
+                player.getBank().remove(item.getId(), intercept);
+                player.baggedCoal += intercept;
+                player.sendFilteredMessage("You withdraw " + intercept + " coal directly to your coal bag.");
+            }
+        }
         return intercept;
     }
-
     static {
         ItemAction.registerInventory(COAL_BAG, "fill", (player, item) -> fill(player));
         ItemAction.registerInventory(COAL_BAG, "check", (player, item) -> check(player));

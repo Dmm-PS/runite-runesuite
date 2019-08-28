@@ -67,8 +67,8 @@ public class PVPInstance {
         /**
          * Create portals
          */
-        GameObject sourcePortal = GameObject.spawn(14845, portalX, portalY, 0, 10, 0);
-        GameObject instancePortal = GameObject.spawn(14844, map.convertX(portalX), map.convertY(portalY), 0, 10, 0);
+        GameObject sourcePortal = new GameObject(14845, portalX, portalY, 0, 10, 0);
+        GameObject instancePortal =  new GameObject(14844, map.convertX(portalX), map.convertY(portalY), 0, 10, 0);
         int instanceDestX = map.convertX(portalDestX);
         int instanceDestY = map.convertY(portalDestY);
         ObjectAction.register(sourcePortal, "use", (player, obj) -> player.dialogue(

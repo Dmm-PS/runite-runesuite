@@ -29,7 +29,7 @@ public class CreditManager {
         player.dialogue(
                 new NPCDialogue(npc, "Hey there, Adventurer, are you admiring my mighty table of riches? The seemingly uncountable piles of gold laid before you? It's beautiful, isn't it?"),
                 new PlayerDialogue("Not really. Who are you?"),
-                new NPCDialogue(npc, "The Master of Merchants; The King of Kings; The Golden Prince! I'm the one who handles all transactions in and out of this world you see around you."),
+                new NPCDialogue(npc, "The MASTER of Merchants; The King of Kings; The Golden Prince! I'm the one who handles all transactions in and out of this world you see around you."),
                 new NPCDialogue(npc, "What would you like to know?"),
                 new OptionsDialogue(
                         new Option("How do I donate?", () -> player.dialogue(
@@ -59,7 +59,7 @@ public class CreditManager {
                                 new NPCDialogue(npc, "Next comes the Super Donator, a step above, and the people who hold " + PlayerGroup.SUPER_DONATOR.tag() + " beside their name."),
                                 new NPCDialogue(npc, "Following that, there's the Extreme Donators, and their names will have a " + PlayerGroup.EXTREME_DONATOR.tag() + " beside it."),
                                 new NPCDialogue(npc, "Afterward, you'll find the Ultimate Donators, a growingly prestigious rank, and their names will be next to a " + PlayerGroup.LEGENDARY_DONATOR.tag() + " icon."),
-                                new NPCDialogue(npc, "The next rank is quite excellent, and a personal favorite of mine, and that's the Master Donators. You'll find their names beside a " + PlayerGroup.UBER_DONATOR.tag() + " icon."),
+                                new NPCDialogue(npc, "The next rank is quite excellent, and a personal favorite of mine, and that's the MASTER Donators. You'll find their names beside a " + PlayerGroup.UBER_DONATOR.tag() + " icon."),
                                 new NPCDialogue(npc, "And finally, and the highest rank of all, is the Godlike Donators. Their names will be beside a " + PlayerGroup.GODLIKE_DONATOR.tag() + "."),
                                 new NPCDialogue(npc, "There may be more ranks to come, but those are all I know of at the moment! As great as I may be, the decisions do come down from the top."),
                                 new PlayerDialogue("Awesome, thanks!"))

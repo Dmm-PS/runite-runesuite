@@ -8,7 +8,8 @@ import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerCounter;
 
-public class DemonSlayer implements AchievementListener {
+public final class DemonSlayer implements AchievementListener {
+
     @Override
     public String name() {
         return "Demon Slayer";
@@ -17,17 +18,18 @@ public class DemonSlayer implements AchievementListener {
     @Override
     public AchievementStage stage(Player player) {
         int amount = PlayerCounter.DEMON_KILLS.get(player);
-        if (amount == 0)
+        if (amount == 0) {
             return AchievementStage.NOT_STARTED;
-        else if (amount >= 300)
+        } else if (amount >= 300) {
             return AchievementStage.FINISHED;
-        else
+        } else {
             return AchievementStage.STARTED;
+        }
     }
 
     @Override
     public String[] lines(Player player, boolean finished) {
-        return new String[]{
+        return new String[] {
                 Achievement.slashIf("Prove yourself worthy of the Darklight sword by slaying demons. ", finished),
                 "",
                 Achievement.slashIf("<col=000080>Assignment</col>: Kill 300 demons of any kind.", finished),
@@ -48,7 +50,8 @@ public class DemonSlayer implements AchievementListener {
     }
 
     public static void check(Player player, NPC killed) {
-        if (killed.getDef().demon)
+        if (killed.getDef().demon) {
             PlayerCounter.DEMON_KILLS.increment(player, 1);
+        }
     }
 }

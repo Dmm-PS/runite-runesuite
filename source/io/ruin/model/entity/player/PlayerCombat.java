@@ -601,7 +601,9 @@ public class PlayerCombat extends Combat {
                 && !SetEffect.ELITE_VOID_RANGE.checkAndApply(player, target, hit)
                 && !SetEffect.ELITE_VOID_MELEE.checkAndApply(player, target, hit)
                 && !SetEffect.BERSERKER_NECKLACE.checkAndApply(player, target, hit)
-                && !SetEffect.OBSIDIAN_ARMOUR.checkAndApply(player, target, hit)) {
+                && !SetEffect.OBSIDIAN_ARMOUR.checkAndApply(player, target, hit)
+                && !SetEffect.SALVE_AMULET.checkAndApply(player, target, hit)
+                && !SetEffect.SALVE_AMULET_I.checkAndApply(player, target, hit)) {
             // do nothing
         }
         if(target.npc != null && target.npc.getDef().dragon && hit.attackStyle != null) {
@@ -750,7 +752,7 @@ public class PlayerCombat extends Combat {
                 if (player.wildernessLevel > 15) {
                     player.presetDelay.delaySeconds(10);
                 }
-                player.getMovement().teleport(3096, 3486, 0);
+                player.getMovement().teleport(3086, 3466, 0);
 
 
                 /**

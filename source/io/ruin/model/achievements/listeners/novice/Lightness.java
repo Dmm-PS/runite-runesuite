@@ -5,7 +5,7 @@ import io.ruin.model.achievements.AchievementListener;
 import io.ruin.model.achievements.AchievementStage;
 import io.ruin.model.entity.player.Player;
 
-public class Lightness implements AchievementListener {
+public final class Lightness implements AchievementListener {
 
     @Override
     public String name() {
@@ -19,7 +19,7 @@ public class Lightness implements AchievementListener {
 
     @Override
     public String[] lines(Player player, boolean finished) {
-        return new String[]{
+        return new String[] {
                 Achievement.slashIf("<col=000080>Assignment</col>: Retrieve the Boots of Lightness from the Temple of Ikov.", finished),
                 Achievement.slashIf("<col=000080>Reward</col>: 10,000 coins and the Boots of Lightness.", finished),
         };

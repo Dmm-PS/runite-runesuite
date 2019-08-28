@@ -3,7 +3,6 @@ package io.ruin.network.incoming.handlers;
 import com.google.gson.GsonBuilder;
 import io.ruin.api.buffer.InBuffer;
 import io.ruin.api.utils.NumberUtils;
-import io.ruin.api.utils.StringUtils;
 import io.ruin.api.utils.TimeUtils;
 import io.ruin.cache.*;
 import io.ruin.cache.EnumMap;
@@ -18,14 +17,17 @@ import io.ruin.data.impl.npcs.npc_shops;
 import io.ruin.data.impl.npcs.npc_spawns;
 import io.ruin.data.impl.teleports;
 import io.ruin.model.World;
+import io.ruin.model.activities.grandexchange.GrandExchange;
 import io.ruin.model.activities.inferno.Inferno;
 import io.ruin.model.activities.nightmarezone.NightmareZonePregame;
-import io.ruin.model.activities.pestcontrol.PestControlPregame;
 import io.ruin.model.activities.raids.xeric.ChambersOfXeric;
 import io.ruin.model.activities.raids.xeric.chamber.Chamber;
 import io.ruin.model.activities.raids.xeric.chamber.ChamberDefinition;
+import io.ruin.model.activities.raids.xeric.chamber.impl.BlankHandler;
+import io.ruin.model.activities.raids.xeric.chamber.impl.CheckpointChamber;
 import io.ruin.model.activities.raids.xeric.party.Party;
 import io.ruin.model.activities.tournament.Tournament;
+import io.ruin.model.activities.tournament.TournamentSchedule;
 import io.ruin.model.activities.tournamentv2.Tournament2;
 import io.ruin.model.activities.wilderness.StaffBounty;
 import io.ruin.model.combat.Hit;
@@ -145,7 +147,6 @@ public class CommandHandler implements Incoming {
 
     private static boolean handleRegular(Player player, String query, String command, String[] args) {
         switch(command) {
-
             case "commands": {
                 if(World.isPVP()) {
                     player.sendScroll("<col=800000>Commands</col>",
@@ -176,9 +177,31 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
-            /**
-             * Item commands
-             */
+
+            case "scout": {
+                if (!ChambersOfXeric.isRaiding(player)) {
+                    player.sendMessage("You are not in a raids party for which you can scout!");
+                    return true;
+                }
+
+                ArrayList<String> chambers = new ArrayList<>();
+
+                for (int i = 0; i < player.raidsParty.getRaid().getChambers().length; i++) {
+                    for (int j = 0; j < player.raidsParty.getRaid().getChambers()[i].length; j++) {
+                        for (int k = 0; k < player.raidsParty.getRaid().getChambers()[i][j].length; k++) {
+                            if (player.raidsParty.getRaid().getChambers()[i][j][k] != null && !(player.raidsParty.getRaid().getChambers()[i][j][k] instanceof
+                                    CheckpointChamber) && !(player.raidsParty.getRaid().getChambers()[i][j][k] instanceof BlankHandler)) {
+                                chambers.add(player.raidsParty.getRaid().getChambers()[i][j][k].getClass().getSimpleName());
+                            }
+                        }
+                    }
+                }
+
+                player.sendScroll("Chambers in this raid", chambers.toArray(new String[0]));
+
+                return true;
+            }
+
             case "barrage": {
                 if(World.isEco()) {
                     return true;
@@ -197,6 +220,7 @@ public class CommandHandler implements Incoming {
                 PrayerAltar.switchBook(player, SpellBook.ANCIENT, false);
                 return true;
             }
+
             case "tb":
             case "teleblock": {
                 if(World.isEco())
@@ -213,17 +237,6 @@ public class CommandHandler implements Incoming {
                 player.getInventory().addOrDrop(563, 1000);
                 player.getInventory().addOrDrop(560, 1000);
                 PrayerAltar.switchBook(player, SpellBook.MODERN, false);
-                return true;
-            }
-
-            case "startit": {
-                Arrays.stream(World.npcs.entityList).filter(Objects::nonNull).filter(npc -> npc.getId() == 2950 || npc.getId() == 1694).forEach(npc -> {
-                    npc.addEvent(event -> {
-                        while (true) {
-                            npc.forceText(npc.getPosition().toString());
-                        }
-                    });
-                });
                 return true;
             }
 
@@ -245,6 +258,7 @@ public class CommandHandler implements Incoming {
                 PrayerAltar.switchBook(player, SpellBook.LUNAR, false);
                 return true;
             }
+
             case "food": {
                 if(World.isEco())
                     return true;
@@ -259,6 +273,7 @@ public class CommandHandler implements Incoming {
                 player.getInventory().add(385, 28);
                 return true;
             }
+
             case "karam": {
                 if(World.isEco())
                     return true;
@@ -273,6 +288,7 @@ public class CommandHandler implements Incoming {
                 player.getInventory().add(3144, 3);
                 return true;
             }
+
             case "setlvls":
             case "setlvl":
             case "setlevels":
@@ -300,14 +316,13 @@ public class CommandHandler implements Incoming {
                 );
                 return true;
             }
-            /**
-             * Teleport commands
-             */
+
             case "edge":
             case "home": {
-                teleport(player, 3092, 3494, 0);
+                teleport(player, 3096, 3487, 0);
                 return true;
             }
+
             case "arena":
             case "stake":
             case "duel":
@@ -315,68 +330,79 @@ public class CommandHandler implements Incoming {
                 teleport(player, 3367, 3265, 0);
                 return true;
             }
+
             case "magebank":
             case "mb": {
                 teleport(player, 2539, 4716, 0);
                 return true;
             }
+
             case "revs": {
                 teleportDangerous(player, 3069, 3651, 0);
                 return true;
             }
+
             case "easts": {
                 teleportDangerous(player, 3364, 3666, 0);
                 return true;
             }
+
             case "wests": {
                 teleportDangerous(player, 2983, 3598, 0);
                 return true;
             }
+
             case "50":
             case "50s":{
                 teleportDangerous(player, 3314, 3912, 0);
                 return true;
             }
+
             case "44":
             case "44s": {
                 teleportDangerous(player, 2972, 3869, 0);
                 return true;
             }
+
             case "chins": {
                 teleportDangerous(player, 3129, 3777, 0);
                 return true;
             }
+
             case "graves": {
                 teleportDangerous(player, 3143, 3677, 0);
                 return true;
             }
+
             case "cammypvp": {
                 teleport(player, 134, 87, 0);
                 return true;
             }
+
             case "edgepvp": {
                 teleport(player, 88, 233, 0);
                 return true;
             }
+
             case "fallypvp": {
                 teleport(player, 129, 362, 0);
                 return true;
             }
+
             case "lumbpvp": {
                 teleport(player, 87, 467, 0);
                 return true;
             }
+
             case "tournament": {
-                teleport(player, 3084, 3491, 0);
+                teleport(player, 3112, 3514, 0);
                // if(World.isEco())
                //     teleport(player, 3114, 3514, 0);
                // else
                //     teleport(player, 3084, 3477, 0);
                 return true;
             }
-            /**
-             * Misc commands
-             */
+
             case "help": {
                 if(World.isEco())
                     return true;
@@ -391,6 +417,7 @@ public class CommandHandler implements Incoming {
                 help.open(player);
                 return true;
             }
+
             case "heal": {
                 if(World.isEco())
                     return true;
@@ -402,6 +429,7 @@ public class CommandHandler implements Incoming {
                     Nurse.heal(player, null);
                 return true;
             }
+
             case "skull": {
                 if(World.isEco())
                     return true;
@@ -413,6 +441,7 @@ public class CommandHandler implements Incoming {
                     Rustin.skull(player);
                 return true;
             }
+
             case "preset": {
                 if(World.isEco())
                     return true;
@@ -431,6 +460,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "yell": {
                 boolean shadow = false;
                 if(Punishment.isMuted(player)) {
@@ -552,6 +582,7 @@ public class CommandHandler implements Incoming {
                 Loggers.logYell(player.getUserId(), player.getName(), player.getIp(), message);
                 return true;
             }
+
             case "staff":
             case "staffonline": {
                 List<String> text = new LinkedList<>();
@@ -581,9 +612,7 @@ public class CommandHandler implements Incoming {
                 player.sendScroll("Staff Online", text.toArray(new String[0]));
                 return true;
             }
-            /**
-             * Hidden commands
-             */
+
             case "pure":
             case "hybrid":
             case "master": {
@@ -592,46 +621,53 @@ public class CommandHandler implements Incoming {
                 player.dialogue(new MessageDialogue("To select presets, go to your quest tab and click the red button."));
                 return true;
             }
-            /**
-             * Website commands
-             */
+
             case "store": {
                 player.openUrl(World.type.getWorldName() + " Store", World.type.getWebsiteUrl() + "/store");
                 return true;
             }
+
             case "updates": {
                 player.openUrl(World.type.getWorldName() + " Updates", World.type.getWebsiteUrl() + "/forum/index.php?forums/development-updates.3/");
                 return true;
             }
+
             case "rules": {
                 player.openUrl(World.type.getWorldName() + " Rules", World.type.getWebsiteUrl() + "/forum/index.php?threads/community-rules.1/");
                 return true;
             }
+
             case "vote": {
                 player.openUrl(World.type.getWorldName() + " Voting", World.type.getWebsiteUrl() + "/vote");
                 return true;
             }
+
             case "guides": {
                 player.openUrl(World.type.getWorldName() + " Guides", World.type.getWebsiteUrl() + "/forum/index.php?forums/guides.7/");
                 return true;
             }
+
             case "support": {
                 player.openUrl(World.type.getWorldName() + " Support", World.type.getWebsiteUrl() + "/forum/index.php?forums/general-support.16/");
                 return true;
             }
+
             case "forums": {
                 player.openUrl(World.type.getWorldName() + " Forums", World.type.getWebsiteUrl() + "/forum/index.php");
                 return true;
             }
+
             case "hiscores":
             case "scores": {
                 player.openUrl(World.type.getWorldName() + " Hiscores", World.type.getWebsiteUrl() + "/hiscores/");
                 return true;
             }
+
             case "discord": {
                 player.openUrl("Official " + World.type.getWorldName() + " Discord Server", "https://discord.gg/SSeKYkk");
                 return true;
             }
+
             case "thread": {
                 int id;
                 try {
@@ -643,6 +679,7 @@ public class CommandHandler implements Incoming {
                 player.openUrl(World.type.getWorldName() + " Thread #" + id, World.type.getWebsiteUrl() + "/forum/index.php?threads/" + id);
                 return true;
             }
+
             case "referral": {
                 player.stringInput("Please enter the referral code you'd like to claim:", referralCode -> Referral.checkClaimed(player, referralCode, alreadyClaimed -> {
                     if(alreadyClaimed) {
@@ -670,18 +707,22 @@ public class CommandHandler implements Incoming {
             case "staffcommands": {
                 break;
             }
+
             case "jail": {
                 forPlayerInt(player, query, "::jail playerName rockCount", (p2, ores) -> Punishment.jail(player, p2, ores));
                 return true;
             }
+
             case "unjail": {
                 forPlayer(player, query, "::unjail playerName", p2 -> Punishment.unjail(player, p2));
                 return true;
             }
+
             case "mute": {
                 forPlayerTime(player, query, "::mute playerName #d/#h/perm", (p2, time) -> Punishment.mute(player, p2, time, false));
                 return true;
             }
+
             case "unmute": {
                 forPlayer(player, query, "::unmute playerName", p2 -> Punishment.unmute(player, p2));
                 return true;
@@ -698,14 +739,17 @@ public class CommandHandler implements Incoming {
                 forPlayer(player, query, "::kick playerName", p2 -> Punishment.kick(player, p2, false));
                 return true;
             }
+
             case "fkick": {
                 forPlayer(player, query, "::kick playerName", p2 -> Punishment.kick(player, p2, true));
                 return true;
             }
+
             case "ban": {
                 forPlayer(player, query, "::ban playerName", p2 -> Punishment.ban(player, p2));
                 return true;
             }
+
             case "removedicerank": {
                 String name = query.substring(command.length() + 1);
                 Player p2 = World.getPlayer(name);
@@ -715,6 +759,7 @@ public class CommandHandler implements Incoming {
                     p2.diceHost = false;
                 return true;
             }
+
             case "teleto": {
                 String name = query.substring(command.length() + 1);
                 Player p2 = World.getPlayer(name);
@@ -734,6 +779,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "teletome": {
                 String name = query.substring(command.length() + 1);
                 Player p2 = World.getPlayer(name);
@@ -804,66 +850,10 @@ public class CommandHandler implements Incoming {
                 p2.hit(new Hit().fixedDamage(p2.getHp()));
                 return true;
             }
-            case "togglepc": {
-                PestControlPregame.enabled = !PestControlPregame.enabled;
-                return true;
-            }
-            case "togglenmz": {
-                NightmareZonePregame.enabled = !NightmareZonePregame.enabled;
-                return true;
-            }
-            case "givedonator": {
-                PlayerGroup group = PlayerGroup.DONATOR;
-                if(!player.isGroup(group)) {
-                    group.sync(player, "donator");
-                    player.sendMessage("Congratulations, you've unlocked a new donator rank: <img=" + group.clientImgId + ">");
-                    player.join(group);
-                }
-                return true;
-            }
-            case "givesuper": {
-                PlayerGroup group = PlayerGroup.SUPER_DONATOR;
-                if(!player.isGroup(group)) {
-                    group.sync(player, "donator");
-                    player.sendMessage("Congratulations, you've unlocked a new donator rank: <img=" + group.clientImgId + ">");
-                    player.join(group);
-                }
-                return true;
-            }
-            case "giveextreme": {
-                PlayerGroup group = PlayerGroup.EXTREME_DONATOR;
-                if(!player.isGroup(group)) {
-                    group.sync(player, "donator");
-                    player.sendMessage("Congratulations, you've unlocked a new donator rank: <img=" + group.clientImgId + ">");
-                    player.join(group);
-                }
-                return true;
-            }
-            case "givelegendary": {
-                PlayerGroup group = PlayerGroup.LEGENDARY_DONATOR;
-                if(!player.isGroup(group)) {
-                    group.sync(player, "donator");
-                    player.sendMessage("Congratulations, you've unlocked a new donator rank: <img=" + group.clientImgId + ">");
-                    player.join(group);
-                }
-                return true;
-            }
-            case "giveuber": {
-                PlayerGroup group = PlayerGroup.UBER_DONATOR;
-                if(!player.isGroup(group)) {
-                    group.sync(player, "donator");
-                    player.sendMessage("Congratulations, you've unlocked a new donator rank: <img=" + group.clientImgId + ">");
-                    player.join(group);
-                }
-                return true;
-            }
-            case "givegodlike": {
-                PlayerGroup group = PlayerGroup.GODLIKE_DONATOR;
-                if(!player.isGroup(group)) {
-                    group.sync(player, "donator");
-                    player.sendMessage("Congratulations, you've unlocked a new donator rank: <img=" + group.clientImgId + ">");
-                    player.join(group);
-                }
+
+            case "disablege": {
+                GrandExchange.ENABLED = false;
+                player.sendMessage("Grand Exchange " + (GrandExchange.ENABLED ? "enabled" : "disabled") + ".");
                 return true;
             }
 
@@ -873,6 +863,7 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("Heatmap " + (player.heatMap ? "enabled" : "disabled") + ".");
                 return true;
             }
+
             case "controlnpc": {
                 if (args == null || args.length == 0) {
                     player.remove("CONTROLLING_NPC");
@@ -891,6 +882,7 @@ public class CommandHandler implements Incoming {
                     return true;
                 }
             }
+
             case "tbuild": {
                 for (int i = 0; i < 512; i++) {
                     AIPlayer aip = new AIPlayer("Test " + i, new Position(0, 0, 0));
@@ -902,32 +894,25 @@ public class CommandHandler implements Incoming {
                 tournament2.join(player);
                 return true;
             }
+
             case "tstart": {
                 tournament2.start();
                 return true;
             }
+
             case "tjoin": {
                 tournament2.join(player);
                 return true;
             }
+
             case "tdestroy": {
                 tournament2.destroy();
                 tournament2 = new Tournament2();
                 return true;
             }
+
             case "ipban": {
                 forPlayer(player, query, "::ban playerName", p2 -> Punishment.IPBan(player, p2));
-                return true;
-            }
-            case "test": {
-                Giveaway.openGiveawayInterface(player);
-                return true;
-            }
-
-            case "nowtry": {
-                Arrays.stream(World.npcs.entityList).filter(Objects::nonNull).filter(npc -> npc.getId() == 1694).forEach(npc -> {
-                    System.out.println("Defiler, pos = " + npc.getPosition());
-                });
                 return true;
             }
 
@@ -936,33 +921,19 @@ public class CommandHandler implements Incoming {
                 player.overloadFlatBoost = 255;
                 return true;
             }
+
             case "resetoverload": {
                 player.overloadTicks = 1;
                 return true;
             }
+
             case "inferno": {
                 new Inferno(player, Integer.parseInt(args[0]), false).start(true);
                 return true;
             }
+
             case "test2": {
                 PlayerCounter.SLAYER_TASKS_COMPLETED.increment(player, 1);
-                return true;
-            }
-            case "test3": {
-                player.openInterface(InterfaceType.MAIN, 207);
-                player.getPacketSender().sendClientScript(264, "i", 1);
-                return true;
-            }
-            case "test4": {
-                player.openInterface(InterfaceType.MAIN, 202);
-                player.getPacketSender().sendClientScript(2402, "");
-                player.getPacketSender().sendClientScript(255, "cs", player.getPosition().getX() << 14 | player.getPosition().getZ() << 28 | player.getPosition().getY(), "Test");
-                player.getPacketSender().sendString(202, 9, "hi");
-                return true;
-            }
-            case "test5": {
-                player.openInterface(InterfaceType.MAIN, 206);
-                player.getPacketSender().sendAccessMask(206, 4, 0, 28, 6);
                 return true;
             }
 
@@ -970,10 +941,29 @@ public class CommandHandler implements Incoming {
                 player.dailyReset();
                 return true;
             }
+
             case "starttourney": {
-                Tournament.startEvent();
+                Consumer<TournamentSchedule> run = schedule -> {
+                    player.dialogue(new OptionsDialogue("How many minutes until start?",
+                            new Option("30 minutes", () -> {
+                                Tournament.forceStart(player, schedule, 1800);
+                            }),
+                            new Option("15 minutes", () -> {
+                                Tournament.forceStart(player, schedule, 900);
+                            }),
+                            new Option("10 minutes", () -> {
+                                Tournament.forceStart(player, schedule, 600);
+                            }),
+                            new Option("5 minutes", () -> {
+                                Tournament.forceStart(player, schedule, 300);
+                            }),
+                            new Option("Cancel")
+                    ));
+                };
+                OptionScroll.open(player, "Select a tournament type", true, Arrays.stream(TournamentSchedule.values()).map(schedule -> new Option(schedule.presetName, () -> run.accept(schedule))).collect(Collectors.toList()));
                 return true;
             }
+
             case "staffbounty": {
                 player.dialogue(new OptionsDialogue("Would you like to toggle the event on or off?",
                         new Option("Toggle on", () -> StaffBounty.startEvent(player)),
@@ -981,10 +971,12 @@ public class CommandHandler implements Incoming {
                 ));
                 return true;
             }
+
             case "tourneybots": {
 
                 return true;
             }
+
             case "aiplayer":
                 player.sendMessage("Spawning AI Player...");
                 AIPlayer aip = new AIPlayer("Test AI", new Position(3092, 3494, 0));
@@ -1000,6 +992,7 @@ public class CommandHandler implements Incoming {
                 });
                 return true;
             }
+
             case "clearcostumeroom": {
                 for (CostumeStorage s : CostumeStorage.values()) {
                     Map<Costume, int[]> stored = s.getSets(player);
@@ -1007,6 +1000,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "fillcostumeroom": {
                 int count = 0;
                 for (CostumeStorage s : CostumeStorage.values()) {
@@ -1028,10 +1022,12 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("Added " + count + " sets.");
                 return true;
             }
+
             case "house": {
                 player.house = new House();
                 return true;
             }
+
             case "conenum": {
                 int id = Integer.parseInt(args[0]);
                 for (int i = 0; i < 2000; i++) {
@@ -1043,25 +1039,30 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "enum": {
                 EnumMap map = EnumMap.get(Integer.parseInt(args[0]));
                 System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(map));
                 return true;
             }
+
             case "housestyle": {
                 player.house.setStyle(HouseStyle.valueOf(String.join("_", args).toUpperCase()));
                 player.sendMessage("set!");
                 return true;
             }
+
             case "resethouse": {
                 player.house = new House();
                 player.sendMessage("House reset");
                 return true;
             }
+
             case "refreshregion": {
                 player.getUpdater().updateRegion = true;
                 return true;
             }
+
             case "testbuild": {
                 Buildable[] objs = new Buildable[] {Buildable.CRUDE_WOODEN_CHAIR, Buildable.CRUDE_WOODEN_CHAIR, Buildable.CRUDE_WOODEN_CHAIR, Buildable.CRUDE_WOODEN_CHAIR, Buildable.CRUDE_WOODEN_CHAIR, Buildable.CRUDE_WOODEN_CHAIR};
                 int count = 1;
@@ -1072,11 +1073,13 @@ public class CommandHandler implements Incoming {
                 player.openInterface(InterfaceType.MAIN, Interface.CONSTRUCTION_FURNITURE_CREATION);
                 return true;
             }
+
             case "materials": { // spawns materials for the given object
                 Buildable b = Buildable.valueOf(String.join("_", args).toUpperCase());
                 b.getMaterials().forEach(player.getInventory()::addOrDrop);
                 return true;
             }
+
             case "allmats": { // spawns materials for all objects in the given room type (last entry in the list, typically the highest level object)
                 RoomDefinition def = RoomDefinition.valueOf(String.join("_", args).toUpperCase());
                 for (Hotspot hotspot : def.getHotspots()) {
@@ -1085,6 +1088,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "conobj": {
                 int id = Integer.parseInt(args[0]);
                 ItemDef itemDef = ItemDef.get(id);
@@ -1101,6 +1105,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "fconobj": {
                 String name = String.join(" ", args).toLowerCase();
                 ObjectDef.forEach(def -> {
@@ -1110,6 +1115,7 @@ public class CommandHandler implements Incoming {
                 });
                 return true;
             }
+
             case "dbolts": {
                 for (String gem: Arrays.asList("opal", "jade", "pearl", "topaz", "sapphire", "emerald", "ruby", "diamond", "dragonstone", "onyx")) {
                     String type = gem + " dragon bolts";
@@ -1136,12 +1142,14 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "customtitle": {
                 String[] parts = String.join(" ", args).split("\\|");
                 player.title = new Title().prefix(parts[0]).suffix(parts[1]);
                 player.getAppearance().update();
                 return true;
             }
+
             case "title": {
                 if (args == null || args.length == 0) {
                     Title.openSelection(player, true);
@@ -1153,17 +1161,20 @@ public class CommandHandler implements Incoming {
                 player.getAppearance().update();
                 return true;
             }
+
             case "wikidrops": {
                 npc_drops.dump(String.join("_", args));
                 player.sendMessage("Dumped!");
                 return true;
             }
+
             case "enterraid": {
                 if (player.raidsParty == null)
                     player.raidsParty = new Party(player);
                 ChambersOfXeric.createChamber(player, player.raidsParty);
                 return true;
             }
+
             case "raid": {
                 ChambersOfXeric raid = args == null ? new ChambersOfXeric() : new ChambersOfXeric(String.join(" ", args));
                 try {
@@ -1180,6 +1191,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "raidroom": {
                 int rotation = 0;
                 int layout = 0;
@@ -1215,23 +1227,28 @@ public class CommandHandler implements Incoming {
                         Arrays.stream(ChamberDefinition.values()).map(cd -> new Option(cd.getName(), () -> run.accept(cd))).collect(Collectors.toList()));
                 return true;
             }
+
             case "hit":
             case "hitme": {
                 player.hit(new Hit().fixedDamage(Integer.parseInt(args[0])).delay(0));
                 return true;
             }
+
             case "tutorial": {
                 player.newPlayer = true;
                 return true;
             }
+
             case "debug": {
                 player.sendMessage("Debug: " + ((player.debug = !player.debug) ? "ON" : "OFF"));
                 return true;
             }
+
             case "update": {
                 World.update(Integer.valueOf(args[0]));
                 return true;
             }
+
             case "objanim": {
                 int id = Integer.parseInt(args[0]);
                 ObjectDef def = ObjectDef.get(id);
@@ -1242,10 +1259,12 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("Object uses animation " + def.unknownOpcode24);
                 return true;
             }
+
             case "animateobj": {
                 Tile.getObject(-1, player.getAbsX(), player.getAbsY(), player.getHeight(), 10, -1).animate(Integer.parseInt(args[0]));
                 return true;
             }
+
             case "hide": {
                 if(player.isHidden()) {
                     player.setHidden(false);
@@ -1256,10 +1275,12 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "kill": {
                 player.hit(new Hit().fixedDamage(player.getHp()));
                 return true;
             }
+
             case "killnpcs": {
                 for (NPC npc : player.localNpcs()) {
                     if (npc.getCombat() == null)
@@ -1270,16 +1291,19 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "pvpmagicaccuracy": {
                 Hit.PVP_MAGIC_ACCURACY_MODIFIER = Double.valueOf(args[0]);
                 player.sendMessage("PVP_MAGIC_ACCURACY_MODIFIER = " + Hit.PVP_MAGIC_ACCURACY_MODIFIER + ";");
                 return true;
             }
+
             case "pvpmeleeaccuracy": {
                 Hit.PVP_MELEE_ACCURACY_MODIFIER = Double.valueOf(args[0]);
                 player.sendMessage("PVP_MELEE_ACCURACY_MODIFIER = " + Hit.PVP_MELEE_ACCURACY_MODIFIER + ";");
                 return true;
             }
+
             case "settask": {
                 if (args == null) {
                     OptionScroll.open(player, "Choose a task", SlayerTask.TASKS.entrySet().stream().map(e -> new Option(e.getKey(), () -> {
@@ -1295,16 +1319,19 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "rune": {
                 Rune r = Rune.valueOf(args[0].toUpperCase());
                 player.getInventory().add(r.getId(), Integer.MAX_VALUE);
                 return true;
             }
+
             case "setbase": {
                 relativeBase = player.getPosition().copy();
                 player.sendMessage("Base set to: " + relativeBase.toString());
                 return true;
             }
+
             case "rel":
             case "relative": {
                 int x = player.getAbsX() - relativeBase.getX();
@@ -1312,10 +1339,12 @@ public class CommandHandler implements Incoming {
                 System.out.println("{" + x + ", " + y + "},");
                 return true;
             }
+
             case "shake": {
                 player.getPacketSender().shakeCamera(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
                 return true;
             }
+
             case "zulrahdeath": {
                 player.getPacketSender().sendItems(-1, 0, 525, new Item(4151, 1));
                 Unlock unlock = new Unlock(602, 3, 0, 89);
@@ -1323,6 +1352,7 @@ public class CommandHandler implements Incoming {
                 player.openInterface(InterfaceType.MAIN, 602);
                 return true;
             }
+
             case "calcmining": {
                 Pickaxe pick =  Pickaxe.find(player);
                 if (pick == null) {
@@ -1340,6 +1370,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "oldcasket": {
                 NPCDef def = NPCDef.get(Integer.parseInt(args[0]));
                 if (def == null) {
@@ -1361,6 +1392,7 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("avg/kill=" + perKill + ", with wealth=" + (perKill * 1.5) + ", wealth+wild=" + (perKill * 2.25));
                 return true;
             }
+
             case "newcasket": {
                 NPCDef def = NPCDef.get(Integer.parseInt(args[0]));
                 if (def == null) {
@@ -1378,17 +1410,22 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("type=" + casket.toString() + ", chance=" + NumberUtils.formatTwoPlaces(chance) + ", perKill=" + goldPerKill);
                 return true;
             }
+
             case "img": {
                 player.sendMessage("<img=" + Integer.parseInt(args[0]) + ">");
                 return true;
             }
+
             case "webhook": {
-               // TournamentEmbedMessage
+                TournamentEmbedMessage.sendDiscordMessage("Dharok", "15 minutes");
+                return true;
             }
+
             case "sproj": {
                 new Projectile(Integer.parseInt(args[0]), 60, 60, 0, 300, 20, 55, 64).send(player.getAbsX(), player.getAbsY(), player.getAbsX() - 5, player.getAbsY());
                 return true;
             }
+
             case "projloop": {
                 player.startEvent(event -> {
                     int id = 0;
@@ -1403,10 +1440,12 @@ public class CommandHandler implements Incoming {
                 });
                 return true;
             }
+
             case "removeplayers": {
                 World.players.forEach(Player::forceLogout);
                 return true;
             }
+
             case "resetslayertask": {
                 Player p2 = World.getPlayer(String.join(" ", args));
                 if(p2 == null) {
@@ -1418,6 +1457,7 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("You have reset " + p2.getName() + "'s task.");
                 return true;
             }
+
             case "checkclue": {
                 Player p2 = World.getPlayer(String.join(" ", args));
                 if(p2.easyClue != null)
@@ -1429,13 +1469,15 @@ public class CommandHandler implements Incoming {
                 if(p2.eliteClue != null)
                     player.sendMessage("Elite[" + p2.eliteClue.id + "]");
                 if(p2.masterClue != null)
-                    player.sendMessage("Master[" + p2.masterClue.id + "]");
+                    player.sendMessage("MASTER[" + p2.masterClue.id + "]");
                 return true;
             }
+
             case "map": {
                 player.getPacketSender().sendMapState(Integer.valueOf(args[0]));
                 return true;
             }
+
             case "lms": {
                 DynamicMap lmsMap = new DynamicMap()
                         .buildSw(13658, 1)
@@ -1445,6 +1487,7 @@ public class CommandHandler implements Incoming {
                 player.getMovement().teleport(lmsMap.swRegion.baseX, lmsMap.swRegion.baseY, 0);
                 return true;
             }
+
             case "attribs": {
                 int id = Integer.valueOf(args[0]);
                 ItemDef def = ItemDef.get(id);
@@ -1460,6 +1503,7 @@ public class CommandHandler implements Incoming {
                 def.attributes.forEach((key, value) -> System.out.println("    " + key + "=" + value));
                 return true;
             }
+
             case "save": {
                 player.sendMessage("Saving online players...");
                 for(Player p : World.players)
@@ -1467,10 +1511,7 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("DONE!");
                 return true;
             }
-            case "bot": {
 
-                return true;
-            }
             case "addbots": {
                 int amount = Integer.valueOf(args[0]);
                 int range = Integer.valueOf(args[1]);
@@ -1479,6 +1520,7 @@ public class CommandHandler implements Incoming {
                     PlayerBot.create(new Position(bounds.randomX(), bounds.randomY(), bounds.z), bot -> {});
                 return true;
             }
+
             case "removebots": {
                 int remove = args != null && args.length >= 1 ? Integer.valueOf(args[0]) : Integer.MAX_VALUE;
                 for(Player p : World.players) {
@@ -1487,11 +1529,13 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "osw":
             case "oswiki": {
                 player.getPacketSender().sendUrl("https://oldschool.runescape.wiki/?search=" + String.join("+", args), false);
                 return true;
             }
+
             case "sound": {
                 int id = Integer.valueOf(args[0]);
                 int type = args.length >= 2 ? Integer.valueOf(args[1]) : 1;
@@ -1499,9 +1543,7 @@ public class CommandHandler implements Incoming {
                 player.privateSound(id, type, delay);
                 return true;
             }
-            /**
-             * Interface commands
-             */
+
             case "interface":
             case "inter": {
                 int interfaceId = Integer.valueOf(args[0]);
@@ -1512,6 +1554,7 @@ public class CommandHandler implements Incoming {
                 player.openInterface(type, interfaceId);
                 return true;
             }
+
             case "inters": {
                 InterfaceType type = InterfaceType.MAIN;
                 if(args != null && args.length == 1)
@@ -1528,6 +1571,7 @@ public class CommandHandler implements Incoming {
                 player.sendFilteredMessage("Interface: " + interfaceId);
                 return true;
             }
+
             case "ic":
             case "iconf": {
                 int interfaceId = Integer.valueOf(args[0]);
@@ -1535,6 +1579,7 @@ public class CommandHandler implements Incoming {
                 InterfaceDef.printConfigs(interfaceId, recursiveSearch);
                 return true;
             }
+
             case "findinterscript": {
                 int scriptId = Integer.valueOf(args[0]);
                 boolean recursiveSearch = args.length >= 2 && Integer.valueOf(args[1]) == 1;
@@ -1546,6 +1591,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "bits": {
                 int id = Integer.valueOf(args[0]);
                 Varp varp = Varp.get(id);
@@ -1558,6 +1604,7 @@ public class CommandHandler implements Incoming {
                     System.out.println("    bit: " + bit.id + "  shift: " + bit.leastSigBit);
                 return true;
             }
+
             case "v":
             case "varp": {
                 int id = Integer.valueOf(args[0]);
@@ -1570,6 +1617,7 @@ public class CommandHandler implements Incoming {
                 player.sendFilteredMessage("Updated varp " + id + "!");
                 return true;
             }
+
             case "vb":
             case "varpbit": {
                 int id = Integer.valueOf(args[0]);
@@ -1583,6 +1631,7 @@ public class CommandHandler implements Incoming {
                 player.sendFilteredMessage("Updated varp " + bit.varpId + " with varpbit " + id + "!");
                 return true;
             }
+
             case "vbs":
             case "varpbits": {
                 int minId = Integer.valueOf(args[0]);
@@ -1600,6 +1649,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "string": {
                 StringBuilder sb = new StringBuilder();
                 for(int i = 2; i < args.length; i++)
@@ -1615,6 +1665,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "ichide": {
                 int parentId = Integer.valueOf(args[0]);
                 int minChildId = Integer.valueOf(args[1]);
@@ -1623,6 +1674,7 @@ public class CommandHandler implements Incoming {
                     player.getPacketSender().setHidden(parentId, childId, true);
                 return true;
             }
+
             case "icshow": {
                 int parentId = Integer.valueOf(args[0]);
                 int minChildId = Integer.valueOf(args[1]);
@@ -1631,11 +1683,13 @@ public class CommandHandler implements Incoming {
                     player.getPacketSender().setHidden(parentId, childId, false);
                 return true;
             }
+
             case "si": {
                 int itemId = Integer.valueOf(args[0]);
                 SkillDialogue.make(player, new SkillItem(itemId).addReq(p -> false));
                 return true;
             }
+
             case "script": {
                 int id = Integer.valueOf(args[0]);
                 ScriptDef def = ScriptDef.get(id);
@@ -1646,6 +1700,7 @@ public class CommandHandler implements Incoming {
                 def.print(System.out);
                 return true;
             }
+
             case "dumpscripts": {
                 for(int i = 0; i < 65535; i++) {
                     ScriptDef def = ScriptDef.get(i);
@@ -1660,6 +1715,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "findintinscript": {
                 int search = Integer.parseInt(args[0]);
                 for (ScriptDef def : ScriptDef.LOADED) {
@@ -1690,6 +1746,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "findvarcinscript": {
                 int id = Integer.parseInt(args[0]);
                 for (ScriptDef def : ScriptDef.LOADED) {
@@ -1705,9 +1762,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
-            /**
-             * Npc commands
-             */
+
             case "npc": {
                 int npcId = Integer.valueOf(args[0]);
                 NPCDef def = NPCDef.get(npcId);
@@ -1718,6 +1773,7 @@ public class CommandHandler implements Incoming {
                 new NPC(npcId).spawn(player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
                 return true;
             }
+
             case "fnpc": {
                 String search = query.substring(5);
                 int combat = -1;
@@ -1732,6 +1788,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "pnpc": {
                 int npcId = Integer.valueOf(args[0]);
                 if(npcId > 0) {
@@ -1749,6 +1806,7 @@ public class CommandHandler implements Incoming {
                 player.getAppearance().update();
                 return true;
             }
+
             case "pnpcs": {
                 Integer lastId = (Integer) player.temp.get("LAST_PNPC");
                 if(lastId == null)
@@ -1764,6 +1822,7 @@ public class CommandHandler implements Incoming {
                 player.getAppearance().update();
                 return true;
             }
+
             case "removenpc": {
                 int id = Integer.parseInt(args[0]);
                 int count = 0;
@@ -1776,6 +1835,7 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("Removed " + count + " NPCs with id " + id + ".");
                 return true;
             }
+
             case "calc":
             case "calculate": {
                 int id = Integer.valueOf(args[0]);
@@ -1791,6 +1851,7 @@ public class CommandHandler implements Incoming {
                 def.lootTable.calculate(def.name + " Loot Probability Table");
                 return true;
             }
+
             case "ispawn": {
                 int id = Integer.valueOf(args[0]);
                 ItemDef def = ItemDef.get(id);
@@ -1802,6 +1863,7 @@ public class CommandHandler implements Incoming {
                 new GroundItem(new Item(id, 1)).position(player.getPosition()).spawnWithRespawn(2);
                 return true;
             }
+
             case "addnpc": { // TODO support more options
                 int id = Integer.valueOf(args[0]);
                 NPCDef def = NPCDef.get(id);
@@ -1814,6 +1876,7 @@ public class CommandHandler implements Incoming {
                 new NPC(id).spawn(player.getPosition());
                 return true;
             }
+
             case "findspawnednpc": {
                 int id = Integer.parseInt(args[0]);
                 World.npcs.forEach(npc -> {
@@ -1823,6 +1886,7 @@ public class CommandHandler implements Incoming {
                 });
                 return true;
             }
+
             case "npcanims": {
                 int sourceId = Integer.parseInt(args[0]);
                 NPCDef sourceDef = NPCDef.get(sourceId);
@@ -1839,6 +1903,7 @@ public class CommandHandler implements Incoming {
                 System.out.println(Arrays.toString(results.toArray()));
                 return true;
             }
+
             case "similaranims": {
                 int sourceId = Integer.parseInt(args[0]);
                 AnimDef source = AnimDef.LOADED[sourceId];
@@ -1859,6 +1924,7 @@ public class CommandHandler implements Incoming {
                 System.out.println("Similar frames: " + Arrays.toString(results.toArray()));
                 return true;
             }
+
             case "dumpnpcanims": {
                 try(BufferedWriter bw = new BufferedWriter(new FileWriter("npcanims.txt"))) {
                     bw.write("id\tname\tanims");
@@ -1881,31 +1947,30 @@ public class CommandHandler implements Incoming {
                 }
                 player.sendMessage("Done");
             }
+
             case "reloadnpcs": {
                 World.npcs.forEach(NPC::remove); //todo fix this
                 DataFile.reload(player, npc_spawns.class);
                 return true;
             }
-            /**
-             * Drop commands
-             */
+
             case "dumpdrops": {
                 npc_drops.dump(String.join("_", args));
                 return true;
             }
+
             case "reloaddrops": {
                 NPCDef.forEach(def -> def.lootTable = null);
                 DataFile.reload(player, npc_drops.class);
                 return true;
             }
-            /**
-             * Item commands
-             */
+
             case "clear":
             case "empty": {
                 player.getInventory().clear();
                 return true;
             }
+
             case "item":
             case "pickup": {
                 int[] ids = NumberUtils.toIntArray(args[0]);
@@ -1916,6 +1981,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "fi":
             case "find":
             case "fitem": {
@@ -1960,22 +2026,26 @@ public class CommandHandler implements Incoming {
                 });
                 return true;
             }
+
             case "b":
             case "bank":
             case "openbank": {
                 player.getBank().open();
                 return true;
             }
+
             case "reloaditems": {
                 DataFile.reload(player, shield_types.class);
                 DataFile.reload(player, weapon_types.class);
                 DataFile.reload(player, item_info.class);
                 return true;
             }
+
             case "reloadshops": {
                 DataFile.reload(player, npc_shops.class);
                 return true;
             }
+
             case "pinv": {
                 StringBuilder sb = new StringBuilder();
                 for(Item item : player.getInventory().getItems()) {
@@ -1985,6 +2055,7 @@ public class CommandHandler implements Incoming {
                 System.out.println(sb.substring(0, sb.length() - 1));
                 return true;
             }
+
             case "wipe": {
                 String name = query.substring(command.length() + 1);
                 Player p2 = World.getPlayer(name);
@@ -2009,18 +2080,18 @@ public class CommandHandler implements Incoming {
                 );
                 return true;
             }
-            /**
-             * Map commands
-             */
+
             case "pos": {
                 System.out.println("new Position(" + player.getAbsX() + ", " + player.getAbsY() + ", " + player.getHeight() + "),");
                 return true;
             }
+
             case "coords": {
                 player.sendMessage("Abs: " + player.getPosition().getX() + ", " + player.getPosition().getY() + ", " + player.getPosition().getZ());
                 System.out.println("{" + (player.getAbsX() - player.getPosition().getRegion().baseX) + ", " + (player.getAbsY() - player.getPosition().getRegion().baseY) + "},");
                 return true;
             }
+
             case "chunk": {
                 int chunkX = player.getPosition().getChunkX();
                 int chunkY = player.getPosition().getChunkY();
@@ -2037,6 +2108,7 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("    points =  " + pointX + ", " + pointY);
                 return true;
             }
+
             case "region": {
                 Region region;
                 if(args == null || args.length == 0)
@@ -2048,12 +2120,14 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("    empty = " + region.empty);
                 return true;
             }
+
             case "clipping": {
                 Tile tile = Tile.get(player.getAbsX(), player.getAbsY(), player.getHeight(), false);
                 player.sendMessage("Clipping: " + (tile == null ? -1 : tile.clipping));
                 System.out.println(tile.clipping & ~RouteFinder.UNMOVABLE_MASK);
                 return true;
             }
+
             case "tele":
             case "teleport": {
                 if(args == null || args.length == 0) {
@@ -2091,6 +2165,7 @@ public class CommandHandler implements Incoming {
                 player.getMovement().teleport(x, y, z);
                 return true;
             }
+
             case "height": {
                 int z = Integer.valueOf(args[0]);
                 if(z < 0)
@@ -2100,14 +2175,17 @@ public class CommandHandler implements Incoming {
                 player.getMovement().teleport(player.getAbsX(), player.getAbsY(), z);
                 return true;
             }
+
             case "down": {
                 player.getMovement().teleport(player.getAbsX(), player.getAbsY(), Math.max(0, player.getHeight() - 1));
                 return true;
             }
+
             case "up": {
                 player.getMovement().teleport(player.getAbsX(), player.getAbsY(), Math.min(3, player.getHeight() + 1));
                 return true;
             }
+
             case "ix": {
                 int increment = Integer.valueOf(args[0]);
                 int x = player.getPosition().getX() + increment;
@@ -2116,6 +2194,7 @@ public class CommandHandler implements Incoming {
                 player.getMovement().teleport(x, y, z);
                 return true;
             }
+
             case "iy": {
                 int increment = Integer.valueOf(args[0]);
                 int x = player.getPosition().getX();
@@ -2124,6 +2203,7 @@ public class CommandHandler implements Incoming {
                 player.getMovement().teleport(x, y, z);
                 return true;
             }
+
             case "iz": {
                 int increment = Integer.valueOf(args[0]);
                 int x = player.getPosition().getX();
@@ -2132,17 +2212,17 @@ public class CommandHandler implements Incoming {
                 player.getMovement().teleport(x, y, z);
                 return true;
             }
+
             case "todung": {
                 player.getMovement().teleport(player.getAbsX(), player.getAbsY() + 6400, player.getHeight());
                 return true;
             }
+
             case "fromdung": {
                 player.getMovement().teleport(player.getAbsX(), player.getAbsY() - 6400, player.getHeight());
                 return true;
             }
-            /**
-             * Object commands
-             */
+
             case "obj": {
                 int id = Integer.valueOf(args[0]);
                 int type = 10;
@@ -2154,6 +2234,7 @@ public class CommandHandler implements Incoming {
                 player.getPacketSender().sendCreateObject(id, player.getAbsX(), player.getAbsY(), player.getHeight(), type, direction);
                 return true;
             }
+
             case "addobj": {
                 int id = Integer.valueOf(args[0]);
                 int type = 10;
@@ -2165,6 +2246,7 @@ public class CommandHandler implements Incoming {
                 GameObject.spawn(id, player.getPosition(), type, direction);
                 return true;
             }
+
             case "objs": {
                 Tile tile = Tile.get(player.getAbsX(), player.getAbsY(), player.getHeight(), false);
                 if(tile == null || tile.gameObjects == null) {
@@ -2193,6 +2275,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
+
             case "fobj": {
                 String search = query.substring(5);
                 int number = -1;
@@ -2212,6 +2295,7 @@ public class CommandHandler implements Incoming {
                 });
                 return true;
             }
+
             case "findinregion": {
                 int id = Integer.parseInt(args[0]);
                 for (Region region : player.getRegions())
@@ -2230,6 +2314,7 @@ public class CommandHandler implements Incoming {
                             }
                 return true;
             }
+
             case "findinmap": {
                 int id = Integer.parseInt(args[0]);
                 CompletableFuture.runAsync(() -> {
@@ -2254,6 +2339,7 @@ public class CommandHandler implements Incoming {
                 });
                 return true;
             }
+
             case "containerobjs": {
                 ObjectDef def = ObjectDef.get(Integer.valueOf(args[0]));
                 if(def == null)
@@ -2267,9 +2353,7 @@ public class CommandHandler implements Incoming {
                 }
                 return true;
             }
-            /**
-             * Stat commands
-             */
+
             case "master": {
                 int xp = Stat.xpForLevel(99);
                 for(int i = 0; i < (World.isPVP() ? 7 : StatType.values().length); i ++) {
@@ -2283,12 +2367,14 @@ public class CommandHandler implements Incoming {
                 player.getAppearance().update();
                 return true;
             }
+
             case "hp": {
                 int amount = Integer.parseInt(args[0]);
                 player.setHp(amount);
                 player.sendMessage("HP set to " + amount + ".");
                 return true;
             }
+
             case "lvl": {
                 StatType type = StatType.get(args[0]);
                 int id = type == null ? Integer.valueOf(args[0]) : type.ordinal();
@@ -2314,13 +2400,12 @@ public class CommandHandler implements Incoming {
                 //not needed?     wep.update();
                 return true;
             }
+
             case "poison": {
                 player.poison(6);
                 return true;
             }
-            /**
-             * Player updating commands
-             */
+
             case "anim":
             case "emote": {
                 int id = Integer.valueOf(args[0]);
@@ -2334,6 +2419,7 @@ public class CommandHandler implements Incoming {
                 player.animate(id, delay);
                 return true;
             }
+
             case "animloop": {
                 player.startEvent(event -> {
                     int id = 0;
@@ -2350,6 +2436,7 @@ public class CommandHandler implements Incoming {
                 });
                 return true;
             }
+
             case "sgfx":
             case "gfx":
             case "graphics": {
@@ -2370,6 +2457,7 @@ public class CommandHandler implements Incoming {
                     player.graphics(id, height, delay);
                 return true;
             }
+
             case "iteminfo": {
                 ItemDef def = ItemDef.get(Integer.parseInt(args[0]));
                 if (def == null) {
@@ -2382,6 +2470,7 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("model=" + def.anInt1504);
                 return true;
             }
+
             case "gfxanim": {
                 GfxDef def = GfxDef.get(Integer.valueOf(args[0]));
                 if(def == null) {
@@ -2391,6 +2480,7 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("Gfx " + def.id + " uses animation " + def.animationId);
                 return true;
             }
+
             case "gfxmodel": {
                 GfxDef def = GfxDef.get(Integer.valueOf(args[0]));
                 if(def == null) {
@@ -2400,6 +2490,7 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("Gfx " + def.id + " uses model " + def.modelId);
                 return true;
             }
+
             case "findgfxa": {
                 int animId = Integer.valueOf(args[0]);
                 player.sendMessage("Finding gfx using anim " + animId + "...");
@@ -2409,6 +2500,7 @@ public class CommandHandler implements Incoming {
                         .forEachOrdered(def -> player.sendMessage("Found: " + def.id));
                 return true;
             }
+
             case "findgfxm": {
                 int model = Integer.valueOf(args[0]);
                 player.sendMessage("Finding gfx using model " + model + "...");
@@ -2418,6 +2510,7 @@ public class CommandHandler implements Incoming {
                         .forEachOrdered(def -> player.sendMessage("Found: " + def.id));
                 return true;
             }
+
             case "objmodels": {
                 ObjectDef obj = ObjectDef.get(Integer.parseInt(args[0]));
                 if (obj == null) {
@@ -2427,6 +2520,7 @@ public class CommandHandler implements Incoming {
                 player.sendMessage(Arrays.toString(obj.modelIds));
                 return true;
             }
+
             case "itemanim": {
                 int id = Integer.parseInt(args[0]);
                 player.sendMessage("Finding animation that uses item " + id + "...");
@@ -2436,6 +2530,7 @@ public class CommandHandler implements Incoming {
                         .forEachOrdered(def -> player.sendMessage("Found: " + def.id));
                 return true;
             }
+
             case "animitem": {
                 AnimDef anim = AnimDef.get(Integer.parseInt(args[0]));
                 if (anim.rightHandItem == -1)
@@ -2444,6 +2539,7 @@ public class CommandHandler implements Incoming {
                     player.sendMessage("Animation uses item " + (anim.rightHandItem - 512) + ".");
                 return true;
             }
+
             case "ag": {
                 int animation = Integer.valueOf(args[0]);
                 //if(animation != -1 && AnimationDefinition.get(animation) == null) {
@@ -2459,22 +2555,23 @@ public class CommandHandler implements Incoming {
                 player.graphics(gfx, 0, 0);
                 return true;
             }
+
             case "projectile":
             case "printprojectile": {
                 Projectile.print(Integer.valueOf(args[0]));
                 return true;
             }
+
             case "picon": {
                 player.getAppearance().setPrayerIcon(Integer.valueOf(args[0]));
                 return true;
             }
+
             case "sicon": {
                 player.getAppearance().setSkullIcon(Integer.valueOf(args[0]));
                 return true;
             }
-            /**
-             * Copy commands
-             */
+
             case "copyinv": {
                 String name = query.substring(query.indexOf(" ") + 1);
                 Player p2 = World.getPlayer(name);
@@ -2492,6 +2589,7 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("You have copied " + name + "'s inventory.");
                 return true;
             }
+
             case "copyarm": {
                 String name = query.substring(query.indexOf(" ") + 1);
                 Player p2 = World.getPlayer(name);
@@ -2510,6 +2608,7 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("You have copied " + name + "'s armor.");
                 return true;
             }
+
             case "copystats": {
                 String name = query.substring(query.indexOf(" ") + 1);
                 Player p2 = World.getPlayer(name);
@@ -2530,6 +2629,7 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("You have copied " + name + "'s stats.");
                 return true;
             }
+
             case "copybank": {
                 String name = query.substring(query.indexOf(" ") + 1);
                 Player p2 = World.getPlayer(name);
@@ -2547,9 +2647,7 @@ public class CommandHandler implements Incoming {
                 player.sendMessage("You have copied " + name + "'s bank.");
                 return true;
             }
-            /**
-             * Camera
-             */
+
             case "resetcamera": {
                 player.getPacketSender().resetCamera();
                 return true;
@@ -2571,14 +2669,23 @@ public class CommandHandler implements Incoming {
                 player.getPacketSender().turnCameraToLocation(3079, 3487, 30, 0, 30);
                 return true;
             }
-            /**
-             * Player saving commands!!
-             */
+
             case "doubledrops": {
                 World.toggleDoubleDrops();
                 return true;
             }
-            case"bmb":
+
+            case "droprate": {
+                World.toggleDropRateBonus();
+                return true;
+            }
+
+            case "doublepc": {
+                World.toggleDoublePestControl();
+                return true;
+            }
+
+            case "bmb":
             case "bmboost": {
                 int multiplier = Integer.valueOf(args[0]);
                 if(multiplier < 1) {
@@ -2591,10 +2698,12 @@ public class CommandHandler implements Incoming {
                 World.boostBM(multiplier);
                 return true;
             }
+
             case "getbmboost": {
                 player.sendMessage("The bloody money multiplier is currently: " + World.bmMultiplier);
                 return true;
             }
+
             case "xpb":
             case "xpboost": {
                 int multiplier = Integer.valueOf(args[0]);
@@ -2608,35 +2717,35 @@ public class CommandHandler implements Incoming {
                 World.boostXp(multiplier);
                 return true;
             }
+
             case "doublexpweekend": {
                 World.toggleWeekendExpBoost();
                 return true;
             }
+
             case "togglewildernesskeyevent": {
                 World.toggleWildernessKeyEvent();
                 boolean active = World.wildernessKeyEvent;
                 player.sendMessage("The wilderness key event is now " + (active ? "enabled" : "disabled") + ".");
                 return true;
             }
-            /**
-             * Login set
-             */
+
             case "loginset": {
                 forName(player, query, "::loginset live", s -> login_set.setActive(player, s));
                 return true;
             }
-            /**
-             * Misc commands
-             */
+
             case "reloadteles":
             case "reloadteleports": {
                 DataFile.reload(player, teleports.class);
                 return true;
             }
+
             case "reloadhelp": {
                 DataFile.reload(player, help.class);
                 return true;
             }
+
             case "unlock": {
                 forPlayer(player, query, "::unlock playerName", p2 -> {
                     if(!p2.isLocked()) {
@@ -2648,10 +2757,12 @@ public class CommandHandler implements Incoming {
                 });
                 return true;
             }
+
             case "smute": {
                 forPlayerTime(player, query, "::smute playerName #d/#h/perm", (p2, time) -> Punishment.mute(player, p2, time, true));
                 return true;
             }
+
             case "resetbankpin": {
                 forPlayer(player, query, "::resetbankpin playerName", p2 -> {
                     p2.getBankPin().setPin(-1);

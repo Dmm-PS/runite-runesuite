@@ -183,7 +183,8 @@ public class Party {
     }
 
     public void addPoints(int points) {
-        this.points += points;
+//        this.points += points;
+        this.points = Math.min(getMaximumPoints(), this.points + points);
     }
 
     public int getPartyCombatLevel() {
@@ -193,5 +194,9 @@ public class Party {
 
     public int getPartyId() {
         return partyId;
+    }
+
+    public int getMaximumPoints() {
+        return getSize() * ChambersOfXeric.MAXIMUM_PERSONAL_POINTS;
     }
 }

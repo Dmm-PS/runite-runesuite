@@ -135,13 +135,23 @@ public class World extends EventWorker {
      * PLAYER SAVERS
      */
 
+    public static boolean dropRateBonus = false;
+
     public static boolean doubleDrops;
 
     public static int xpMultiplier = 0;
 
+    public static boolean doublePestControl;
+
     public static int bmMultiplier = 0;
 
     public static boolean weekendExpBoost = false;
+
+    public static void toggleDropRateBonus() {
+        dropRateBonus = !dropRateBonus;
+        String message = dropRateBonus ? "now" : "no longer";
+        Broadcast.WORLD.sendNews(Icon.RED_INFO_BADGE, "The server is " + message + " experiencing a 15% drop rate bonus!");
+    }
 
     public static void toggleDoubleDrops() {
         doubleDrops = !doubleDrops;
@@ -160,6 +170,15 @@ public class World extends EventWorker {
             Broadcast.WORLD.sendNews(Icon.RED_INFO_BADGE, "Experience is now being quadrupled! (x4)");
         else
             Broadcast.WORLD.sendNews(Icon.RED_INFO_BADGE, "Experience is now boosted! (x" + multiplier + ")");
+    }
+
+    public static void toggleDoublePestControl() {
+        doublePestControl = !doublePestControl;
+        if (doublePestControl) {
+            Broadcast.WORLD.sendNews("Pest Control reward points are currently being doubled! (x2)");
+        } else {
+            Broadcast.WORLD.sendNews("Pest Control reward points are no longer being doubled.");
+        }
     }
 
     public static void toggleWeekendExpBoost() {

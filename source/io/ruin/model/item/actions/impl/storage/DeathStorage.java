@@ -23,7 +23,7 @@ import io.ruin.model.map.object.actions.ObjectAction;
 
 public class DeathStorage extends ItemContainer {
 
-    private static GameObject CHEST = GameObject.spawn(28797, 3098, 3486, 0, 10, 3);
+    private static GameObject CHEST = GameObject.spawn(28797, 3089, 3466, 0, 10, 3);
 
     static {
         // death storage chest -- maybe find something that fits the area better?
@@ -166,7 +166,15 @@ public class DeathStorage extends ItemContainer {
         if (World.isEco()) {
             if (player.getStats().totalLevel < 500)
                 return null;
-            return new Item(995, (int) (200000 + (((player.getStats().totalLevel - 500) / (2277d - 500)) * 800000)));
+            //return new Item(995, (int) (200000 + (((player.getStats().totalLevel - 500) / (2277d - 500)) * 800000)));
+            int totalValue = 0;
+            for (Item item : getItems()) {
+                if (item == null) {
+                    continue;
+                }
+                totalValue += item.getDef().value;
+            }
+            return new Item(995, totalValue);
         } else {
             return new Item(13307, 1500);
         }

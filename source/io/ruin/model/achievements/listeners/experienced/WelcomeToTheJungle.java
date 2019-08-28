@@ -6,7 +6,7 @@ import io.ruin.model.achievements.AchievementListener;
 import io.ruin.model.achievements.AchievementStage;
 import io.ruin.model.entity.player.Player;
 
-public class WelcomeToTheJungle implements AchievementListener {
+public final class WelcomeToTheJungle implements AchievementListener {
 
     @Override
     public String name() {
@@ -20,7 +20,7 @@ public class WelcomeToTheJungle implements AchievementListener {
 
     @Override
     public String[] lines(Player player, boolean finished) {
-        return new String[]{
+        return new String[] {
                 Achievement.slashIf("Jungle demons are powerful demons,", finished),
                 Achievement.slashIf("capable of using both melee and magic.", finished),
                 Achievement.slashIf("", finished),
@@ -40,7 +40,8 @@ public class WelcomeToTheJungle implements AchievementListener {
 
     @Override
     public void finished(Player player) {
-        if (!player.getGameMode().isIronMan())
+        if (!player.getGameMode().isIronMan()) {
             rewardCoins(player, 100000);
+        }
     }
 }

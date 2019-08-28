@@ -92,7 +92,7 @@ public class CostumeRoom {
                 new Option("Medium treasure trails", () -> CostumeStorage.MEDIUM_TREASURE_TRAILS.open(player)),
                 new Option("Hard treasure trails", () -> CostumeStorage.HARD_TREASURE_TRAILS_1.open(player)),
                 new Option("Elite treasure trails", () -> CostumeStorage.ELITE_TREASURE_TRAILS.open(player)),
-                new Option("Master treasure trails", () -> CostumeStorage.MASTER_TREASURE_TRAILS.open(player))
+                new Option("MASTER treasure trails", () -> CostumeStorage.MASTER_TREASURE_TRAILS.open(player))
         )));
         ItemObjectAction.register(18809, (player, item, obj) -> depositCostume(player, item, Buildable.MAHOGANY_TREASURE_CHEST, CostumeStorage.EASY_TREASURE_TRAILS, CostumeStorage.MEDIUM_TREASURE_TRAILS, CostumeStorage.HARD_TREASURE_TRAILS_1, CostumeStorage.HARD_TREASURE_TRAILS_2, CostumeStorage.ELITE_TREASURE_TRAILS, CostumeStorage.MASTER_TREASURE_TRAILS));
 

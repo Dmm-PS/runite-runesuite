@@ -41,7 +41,7 @@ public enum AmuletOfGlory {
 
     static {
         JeweleryTeleports teleports = new JeweleryTeleports("amulet", true,
-                new JeweleryTeleports.Teleport("Edgeville", 3092, 3494, 0),
+                new JeweleryTeleports.Teleport("Edgeville", 3096, 3487, 0),
                 new JeweleryTeleports.Teleport("Karamja", 2918, 3176, 0),
                 new JeweleryTeleports.Teleport("Draynor Village", 3105, 3251, 0),
                 new JeweleryTeleports.Teleport("Al Kharid", 3293, 3163, 0)

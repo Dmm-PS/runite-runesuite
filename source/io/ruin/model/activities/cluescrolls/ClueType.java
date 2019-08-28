@@ -676,7 +676,7 @@ public enum ClueType {
 
     private final String descriptiveName;
 
-    private final LootItem[] loots;
+    public final LootItem[] loots;
 
     ClueType(int clueId, int casketId, int minStages, int maxStages, LootItem... loots) {
         this.clueId = clueId;

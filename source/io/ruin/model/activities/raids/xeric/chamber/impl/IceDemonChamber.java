@@ -138,7 +138,7 @@ public class IceDemonChamber extends Chamber {
                         GameObject obj = braziers.get(i);
                         int kindling = obj.get("KINDLING", 0);
                         if (kindling >= remove) {
-                            damage += 17;
+                            damage += 20;
                             if (i < Math.min(4, getRaid().getPartySize())) { // if guarded by icefiend, consume more
                                 remove *= 2;
                                 icefiends.get(i).animate(7820);
@@ -163,7 +163,7 @@ public class IceDemonChamber extends Chamber {
             }));
             Position dest = getPosition(walkPositions[getLayout()][0], walkPositions[getLayout()][1]);
             demon.getDef().ignoreOccupiedTiles = true;
-            demon.stepAbs(dest.getX(), dest.getY(), StepType.NORMAL);
+            demon.stepAbs(dest.getX(), dest.getY(), StepType.FORCE_WALK);
             event.waitForMovement(demon);
             event.delay(1);
             demon.hitsUpdate.hpBarType = 5;

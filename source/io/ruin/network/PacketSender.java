@@ -802,4 +802,16 @@ public class PacketSender {
         write(out);
     }
 
+    public void sendGrandExchangeUpdate(int state, int slot, int itemId, int price, int amount, int amountSold, int moneyReceived) {
+        OutBuffer out = new OutBuffer(21).sendFixedPacket(31);
+        out.addByte(slot);
+        out.addByte(state);
+        out.addShort(itemId);
+        out.addInt(price);
+        out.addInt(amount);
+        out.addInt(amountSold);
+        out.addInt(moneyReceived);
+        write(out);
+    }
+
 }

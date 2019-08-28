@@ -5,7 +5,8 @@ import io.ruin.model.achievements.AchievementListener;
 import io.ruin.model.achievements.AchievementStage;
 import io.ruin.model.entity.player.Player;
 
-public class IntoTheAbyss implements AchievementListener {
+public final class IntoTheAbyss implements AchievementListener {
+
     @Override
     public String name() {
         return "Into the abyss";

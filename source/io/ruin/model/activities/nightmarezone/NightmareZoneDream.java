@@ -101,6 +101,7 @@ public final class NightmareZoneDream {
             player.nmzRewardPoints += rewardPointsGained;
             player.sendMessage(Color.DARK_GREEN.wrap("You have earned " + rewardPointsGained + " reward points. New total: " + player.nmzRewardPoints));
             player.teleportListener = null;
+            player.deathEndListener = null;
         };
 
         player.teleportListener = p -> {

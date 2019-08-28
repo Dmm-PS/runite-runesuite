@@ -37,7 +37,7 @@ public class VoteManager {
                     player.dialogue(new NPCDialogue(npc, "No unclaimed votes found."));
                     return;
                 }
-                player.getInventory().add(4067, claimed * 3);
+                player.getInventory().add(4067, claimed);
                 player.claimedVotes += claimed;
                 player.dialogue(new NPCDialogue(npc, "You've successfully claimed " + claimed + " vote" + (claimed > 1 ? "s" : "") + "!"));
                 player.sendFilteredMessage(Color.COOL_BLUE.wrap("You receive " + claimed + " vote ticket" + (claimed > 1 ? "s" : "") + " for voting."));

@@ -7,7 +7,7 @@ import io.ruin.model.achievements.AchievementStage;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerCounter;
 
-public class GoldenTouch implements AchievementListener {
+public final class GoldenTouch implements AchievementListener {
 
     @Override
     public String name() {
@@ -18,17 +18,18 @@ public class GoldenTouch implements AchievementListener {
     public AchievementStage stage(Player player) {
         int bars = PlayerCounter.SMELTED_GOLD_BARS.get(player);
         int ores = PlayerCounter.MINED_GOLD.get(player);
-        if (bars == 0 && ores == 0)
+        if (bars == 0 && ores == 0) {
             return AchievementStage.NOT_STARTED;
-        else if (bars >= 500 && ores >= 500)
+        } else if (bars >= 500 && ores >= 500) {
             return AchievementStage.FINISHED;
-        else
+        } else {
             return AchievementStage.STARTED;
+        }
     }
 
     @Override
     public String[] lines(Player player, boolean finished) {
-        return new String[]{
+        return new String[] {
                 Achievement.slashIf("", finished),
                 "",
                 Achievement.slashIf("<col=000080>Assignment</col>: Mine and smelt 500 gold ore.", finished),

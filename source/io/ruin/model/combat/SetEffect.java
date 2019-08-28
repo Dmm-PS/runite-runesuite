@@ -114,7 +114,14 @@ public enum SetEffect {
             new Piece(Equipment.SLOT_FEET, "graceful boots"),
             new Piece(Equipment.SLOT_CAPE, def -> def.name.toLowerCase().contains("graceful cape") || def.name.toLowerCase().contains("agility cape"))
             ),
-    ;
+    SALVE_AMULET(
+            (player, target, hit) -> hit.boostAttack(0.15).boostDamage(0.15),
+            (player, hit) -> player.getCombat().getTarget().npc != null && player.getCombat().getTarget().npc.getDef().undead,
+            new Piece(Equipment.SLOT_AMULET, 4081)),
+    SALVE_AMULET_I((
+            player, target, hit) -> hit.boostAttack(0.20).boostDamage(0.20),
+            (player, hit) -> player.getCombat().getTarget().npc != null && player.getCombat().getTarget().npc.getDef().undead,
+            new Piece(Equipment.SLOT_AMULET, 12017));
 
     BiPredicate<Player, Hit> hitCondition; // must fulfill this condition to even check if the pieces are equipped
     private Effect hitEffect;

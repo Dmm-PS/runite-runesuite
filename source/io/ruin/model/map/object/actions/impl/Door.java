@@ -526,8 +526,8 @@ public class Door {
                 ObjectAction.register(def.id, "close", Door::handle);
         });
         if(World.isEco()) {
-            ObjectAction.register(2339, 3074, 3496, 0, "close", (player, obj) -> player.sendFilteredMessage("The door seems to be stuck."));
-            ObjectAction.register(12657, 2319, 3690, 0, "open", (player, obj) -> player.sendFilteredMessage("The door seems to be stuck."));
+//            ObjectAction.register(2339, 3074, 3496, 0, "close", (player, obj) -> player.sendFilteredMessage("The door seems to be stuck."));
+//            ObjectAction.register(12657, 2319, 3690, 0, "open", (player, obj) -> player.sendFilteredMessage("The door seems to be stuck."));
         }
     }
 

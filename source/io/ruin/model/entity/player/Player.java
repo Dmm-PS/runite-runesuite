@@ -182,7 +182,7 @@ public class Player extends PlayerAttributes {
 
     public boolean isAdmin() {
         return isGroup(PlayerGroup.OWNER) || isGroup(PlayerGroup.DEVELOPER)
-                || isGroup(PlayerGroup.COMMUNITY_MANAGER)
+                || isGroup(PlayerGroup.MANAGER)
                 || (World.isPVP() && isGroup(PlayerGroup.ADMINISTRATOR));
     }
 

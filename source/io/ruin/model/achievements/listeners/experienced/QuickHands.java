@@ -6,7 +6,7 @@ import io.ruin.model.achievements.AchievementListener;
 import io.ruin.model.achievements.AchievementStage;
 import io.ruin.model.entity.player.Player;
 
-public class QuickHands implements AchievementListener {
+public final class QuickHands implements AchievementListener {
 
     @Override
     public String name() {
@@ -15,16 +15,18 @@ public class QuickHands implements AchievementListener {
 
     @Override
     public AchievementStage stage(Player player) {
-        if(player.wallSafesCracked == 0)
+        if (player.wallSafesCracked == 0) {
             return AchievementStage.NOT_STARTED;
-        if(player.wallSafesCracked < 250)
+        } else if (player.wallSafesCracked < 250) {
             return AchievementStage.STARTED;
+        }
+
         return AchievementStage.FINISHED;
     }
 
     @Override
     public String[] lines(Player player, boolean finished) {
-        return new String[]{
+        return new String[] {
                 Achievement.slashIf("Memorization through repetition, master the traps of the wall safe", finished),
                 "",
                 Achievement.slashIf("<col=000080>Assignment</col>: Crack 250 wall safes", finished),

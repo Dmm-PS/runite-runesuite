@@ -302,7 +302,7 @@ public class Tournament2 {
             }
 
             if (logout) {
-                player.getMovement().teleport(3092, 3494, 0);
+                player.getMovement().teleport(3096, 3487, 0);
             }
 
             resetPlayer(player);

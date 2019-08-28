@@ -184,6 +184,8 @@ public abstract class PlayerAttributes extends Entity {
     @Expose public int wallSafesCracked;
     @Expose public int rougesCastleChests;
     @Expose public int pickedLocks;
+    @Expose public int undeadMonstersSlain;
+    @Expose public int tournamentParticipation;
 
     /**
      * Firemaking
@@ -760,6 +762,7 @@ public abstract class PlayerAttributes extends Entity {
     @Expose public KillCounter derangedArchaeologistKills = new KillCounter();
     @Expose public KillCounter elvargKills = new KillCounter();
     @Expose public KillCounter vorkathKills = new KillCounter();
+    @Expose public KillCounter galvekKills = new KillCounter();
 
     /**
      * Slayer kill counters
@@ -817,6 +820,9 @@ public abstract class PlayerAttributes extends Entity {
 
     public ActivityTimer zulrahTimer;
     @Expose public long zulrahBestTime;
+
+    public ActivityTimer galvekTimer;
+    @Expose public long galvekBestTime;
 
     /**
      * Staff of the dead

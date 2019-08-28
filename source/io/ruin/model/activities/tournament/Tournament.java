@@ -12,6 +12,7 @@ import io.ruin.model.entity.npc.NPC;
 import io.ruin.model.entity.npc.NPCAction;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerAction;
+import io.ruin.model.entity.player.PlayerCounter;
 import io.ruin.model.entity.shared.LockType;
 import io.ruin.model.entity.shared.StepType;
 import io.ruin.model.entity.shared.listeners.SpawnListener;
@@ -22,6 +23,7 @@ import io.ruin.model.inter.utils.Option;
 import io.ruin.model.item.Item;
 import io.ruin.model.item.ItemContainer;
 import io.ruin.model.map.*;
+import io.ruin.model.map.object.GameObject;
 import io.ruin.model.map.object.actions.ObjectAction;
 import io.ruin.model.stat.StatType;
 import io.ruin.services.Loggers;
@@ -36,6 +38,8 @@ import static io.ruin.model.inter.utils.Config.varpbit;
 
 public class Tournament {
 
+    private static final GameObject TOURNAMENT_INFORMATION = GameObject.spawn(31846, 3111, 3513, 0, 10, 0);
+
     /**
      * Debug boolean
      */
@@ -44,7 +48,7 @@ public class Tournament {
     /**
      * Tournament bounds
      */
-    public static final Bounds JOIN_BOUNDS = World.isPVP() ? new Bounds(3077, 3488, 3081, 3497, 0) : new Bounds(3109, 3513, 3115, 3518, 0);
+    public static final Bounds JOIN_BOUNDS = World.isPVP() ? new Bounds(3077, 3488, 3081, 3497, 0) : new Bounds(3107, 3511, 3111, 3517, 0);
     private static final Bounds LEAVE_BOUNDS = World.isPVP() ? new Bounds(3077, 3488, 3081, 3497, 0) : new Bounds(3110, 3511, 3110, 3515, 0);
 
     private static final Bounds START_BOUNDS = new Bounds(3322, 4964, 3324, 4976, 0);
@@ -187,15 +191,15 @@ public class Tournament {
                 TournamentSchedule.timeUntilTournament(secondsUntilStart(ticksUntilStart)),
                 "",
                 "<col=800000>Tournament Information:</col>",
-                "Tournaments are hosted all day every 2 hours. There is a random",
+                "Tournaments are hosted all day every 3 hours. There is a random",
                 "combat style selected every tournament. Tournaments do not cost",
-                "any blood money to join.",
+                "anything to join.",
                 "",
                 "<col=800000>Tournament Rewards: </col>",
-                "<col=800000>First Place: </col> <img=47> " + NumberUtils.formatNumber(FIRST_PLACE_BM) + " Blood Money and " + FIRST_PLACE_TT + " Tournament tickets",
-                "<col=800000>Second Place: </col> <img=47> " + NumberUtils.formatNumber(SECOND_PLACE_BM) + " Blood Money and " + SECOND_PLACE_TT + " Tournament tickets",
-                "<col=800000>Third Place: </col> <img=47> " + NumberUtils.formatNumber(THIRD_PLACE_BM) + " Blood Money and " + THIRD_PLACE_TT + " Tournament tickets",
-                "<col=800000>Unplaced: </col> <img=47> 1,000 Blood Money and " + DEFAULT_TT + " Tournament tickets"
+                "<col=800000>First Place: </col> " + NumberUtils.formatNumber(FIRST_PLACE_BM) + " coins and " + FIRST_PLACE_TT + " Tournament tickets",
+                "<col=800000>Second Place: </col>" + NumberUtils.formatNumber(SECOND_PLACE_BM) + " coins and " + SECOND_PLACE_TT + " Tournament tickets",
+                "<col=800000>Third Place: </col> " + NumberUtils.formatNumber(THIRD_PLACE_BM) + " coins and " + THIRD_PLACE_TT + " Tournament tickets",
+                "<col=800000>Unplaced: </col> Nothing!"
         );
     }
 
@@ -444,10 +448,11 @@ public class Tournament {
                 resetListeners(player);
                 resetPlayer(player);
                 event.delay(2);
-                Loggers.logTournamentResults(player.getUserId(), player.getName(), player.getIp(), 1);
+                //Loggers.logTournamentResults(player.getUserId(), player.getName(), player.getIp(), 1);
                 rewardPlayer(player, "first", "Winner!", FIRST_PLACE_BM, FIRST_PLACE_TT, true);
                 Broadcast.WORLD.sendNews(Icon.ANNOUNCEMENT, "Tournament", player.getName() + " has just placed first in the tournament!");
                 player.tournamentWins++;
+                player.tournamentParticipation++;
                 player.resetAnimation();
                 event.delay(2);
                 player.unlock();
@@ -496,12 +501,13 @@ public class Tournament {
             event.delay(1);
             if (participants.size() <= 1) {
                 rewardPlayer(player, "second", "Second!", SECOND_PLACE_BM, SECOND_PLACE_TT, true);
-                Loggers.logTournamentResults(player.getUserId(), player.getName(), player.getIp(), 2);
+                // Loggers.logTournamentResults(player.getUserId(), player.getName(), player.getIp(), 2);
             } else if (participants.size() == 2) {
                 rewardPlayer(player, "third", "Third!", THIRD_PLACE_BM, THIRD_PLACE_TT, true);
-                Loggers.logTournamentResults(player.getUserId(), player.getName(), player.getIp(), 3);
+                // Loggers.logTournamentResults(player.getUserId(), player.getName(), player.getIp(), 3);
             } else {
                 player.dialogue(new ItemDialogue().one(964, "You have lost the fight and have been kicked out of the tournament.").lineHeight(24));
+                PlayerCounter.TOURNAMENT_PARTICIPATION.increment(player, 1);
                 if(World.isPVP())
                     rewardPlayer(player, "", "", DEFAULT_BM, DEFAULT_TT, false);
                 updateStatus(player, "Lost!");
@@ -609,6 +615,15 @@ public class Tournament {
     private static void resetInterface(Player player) {
         player.closeInterface(InterfaceType.SECONDARY_OVERLAY);
         player.closeInterface(InterfaceType.PRIMARY_OVERLAY);
+    }
+
+    public static void forceStart(Player player, TournamentSchedule sched, int ticks) {
+        if (ticksUntilStart <= 1800) {
+            player.sendMessage(Color.RED.tag() + "A tournament is already about to begin soon; no point in starting one right now!");
+            return;
+        }
+        ticksUntilStart = ticks;
+        schedule = sched;
     }
 
     static {

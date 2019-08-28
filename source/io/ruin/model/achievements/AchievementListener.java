@@ -16,7 +16,7 @@ public interface AchievementListener {
     void finished(Player player);
 
     default void rewardCoins(Player player, int amount) {
-        if(player.getInventory().hasRoomFor(995)) {
+        if (player.getInventory().hasRoomFor(995)) {
             player.getInventory().add(995, amount);
             player.sendMessage(Color.COOL_BLUE.wrap("You've been rewarded 10,000 gold coins for completing " + name() + "."));
         } else {

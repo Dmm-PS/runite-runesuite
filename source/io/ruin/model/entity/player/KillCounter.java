@@ -52,6 +52,7 @@ public class KillCounter {
         set(p -> p.derangedArchaeologistKills, "deranged Archaeologist");
         set(p -> p.elvargKills, 6118);
         set(p -> p.vorkathKills, "vorkath");
+        set(p -> p.galvekKills, "galvek");
 
         /* Slayer monsters */
         set(p -> p.crawlingHandKills, "crawling Hand");
@@ -137,6 +138,7 @@ public class KillCounter {
             p.barrowsChestsLooted.setName("Barrows Chests").messageOnKill();
             p.elvargKills.setName("Elvarg").messageOnKill();
             p.vorkathKills.setName("Vorkath").messageOnKill();
+            p.galvekKills.setName("Galvek").messageOnKill();
 
             p.crawlingHandKills.setName("Crawling Hands");
             p.caveBugKills.setName("Cave Bugs");
@@ -217,7 +219,8 @@ public class KillCounter {
 //                p -> p.oborKills,
                 p -> p.chambersofXericKills,
 //                p -> p.derangedArchaeologistKills
-                p -> p.vorkathKills
+                p -> p.vorkathKills,
+                p -> p.galvekKills
         );
 
         /* Slayer list */

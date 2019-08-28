@@ -46,6 +46,8 @@ import static io.ruin.model.activities.raids.xeric.chamber.ChamberDefinition.*;
  */
 public class ChambersOfXeric {
 
+    public static final int MAXIMUM_PERSONAL_POINTS = 131_071;
+
     static {
 
         LoginListener.register(p -> { //attempt to rejoin if logged out during a raid
@@ -602,6 +604,10 @@ public class ChambersOfXeric {
             player.getPacketSender().fadeOut();
             event.delay(2);
             player.getMovement().teleport(party.getRaid().getStartingChamber().getEntrancePosition());
+            player.getStats().restore(false);
+            player.getMovement().restoreEnergy(100);
+            Config.SPECIAL_ENERGY.set(player, 1000);
+            player.cureVenom(0);
             raid.entered(player);
             raid.assignListener(player);
             player.getPacketSender().fadeIn();
@@ -813,11 +819,16 @@ public class ChambersOfXeric {
         return lowerFinishChamber;
     }
 
+    public Chamber[][][] getChambers() {
+        return chambers;
+    }
+
     public static void addPoints(Player player, int points) {
         if (!isRaiding(player))
             return;
-        Config.RAIDS_PERSONAL_POINTS.set(player, Config.RAIDS_PERSONAL_POINTS.get(player) + points);
-        Config.RAIDS_PARTY_POINTS.set(player, Config.RAIDS_PARTY_POINTS.get(player) + points);
+
+        Config.RAIDS_PERSONAL_POINTS.set(player, Math.min(MAXIMUM_PERSONAL_POINTS, Config.RAIDS_PERSONAL_POINTS.get(player) + points));
+        Config.RAIDS_PARTY_POINTS.set(player, Math.min(player.raidsParty.getMaximumPoints(), Config.RAIDS_PARTY_POINTS.get(player) + points));
         player.raidsParty.addPoints(points);
     }
 

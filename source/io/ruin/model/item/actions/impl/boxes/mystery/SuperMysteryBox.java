@@ -33,7 +33,7 @@ public class SuperMysteryBox extends ItemContainer {
             new LootItem(12831, 1, 20), //Blessed spirit shield
             new LootItem(11926, 1, 20), //Odium ward
             new LootItem(11924, 1, 20), //Malediction ward
-            new LootItem(6889, 1, 20), //Master's book
+            new LootItem(6889, 1, 20), //MASTER's book
             new LootItem(12900, 1, 20), //Uncharged toxic trident
             new LootItem(20724, 1, 20), //Imbued heart
             new LootItem(11908, 1, 20), //Uncharged trident
@@ -149,7 +149,7 @@ public class SuperMysteryBox extends ItemContainer {
             new LootItem(12379, 1, 15), //Rune cane
             new LootItem(12373, 1, 15), //Dragon cane
             new LootItem(12363, 1, 15), //Bronze dragon mask
-            new LootItem(6889, 1, 15), //Master's book
+            new LootItem(6889, 1, 15), //MASTER's book
             new LootItem(12900, 1, 15), //Uncharged toxic trident
             new LootItem(20724, 1, 15), //Imbued heart
             new LootItem(11908, 1, 15), //Uncharged trident
@@ -268,7 +268,7 @@ public class SuperMysteryBox extends ItemContainer {
             new LootItem(12379, 1, 15), //Rune cane
             new LootItem(12373, 1, 15), //Dragon cane
             new LootItem(12363, 1, 15), //Bronze dragon mask
-            new LootItem(6889, 1, 15), //Master's book
+            new LootItem(6889, 1, 15), //MASTER's book
             new LootItem(12900, 1, 15), //Uncharged toxic trident
             new LootItem(20724, 1, 15), //Imbued heart
             new LootItem(11908, 1, 15), //Uncharged trident

@@ -7,7 +7,7 @@ import io.ruin.model.achievements.AchievementStage;
 import io.ruin.model.entity.player.Player;
 import io.ruin.model.entity.player.PlayerCounter;
 
-public class ImplingHunter implements AchievementListener {
+public final class ImplingHunter implements AchievementListener {
 
     @Override public String name() {
         return "Impling Hunter";
@@ -16,12 +16,13 @@ public class ImplingHunter implements AchievementListener {
     @Override
     public AchievementStage stage(Player player) {
         int amount = PlayerCounter.IMPLINGS_CAUGHT.get(player);
-        if (amount == 0)
+        if (amount == 0) {
             return AchievementStage.NOT_STARTED;
-        else if (amount >= 30)
+        } else if (amount >= 30) {
             return AchievementStage.FINISHED;
-        else
+        } else {
             return AchievementStage.STARTED;
+        }
     }
 
     public String[] lines(Player player, boolean finished) {

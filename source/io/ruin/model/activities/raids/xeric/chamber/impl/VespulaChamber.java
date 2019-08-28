@@ -22,7 +22,7 @@ public class VespulaChamber extends Chamber {
 
     private static final int[][] portalSpawns = {
             {17, 21},
-            {23, 16},
+            {21, 12}, // 22 was 23
             {11, 21},
     };
 

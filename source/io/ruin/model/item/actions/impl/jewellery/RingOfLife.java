@@ -14,7 +14,7 @@ public class RingOfLife {
             Item ring = player.getEquipment().get(Equipment.SLOT_RING);
             if (ring == null || ring.getId() != 2570)
                 return;
-            if(ModernTeleport.teleport(player, 3092, 3494, 0)) {
+            if(ModernTeleport.teleport(player, 3096, 3487, 0)) {
                 ring.remove();
                 player.sendFilteredMessage("Your ring of life crumbles to dust.");
             }
