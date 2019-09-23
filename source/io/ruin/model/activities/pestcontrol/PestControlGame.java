@@ -149,7 +149,7 @@ public final class PestControlGame {
     private void initPortals() {
         // Todo fix this method.
         for (PestControlPortal portal : PestControlPortal.VALUES) {
-            NPC npc = new NPC(portal.npcId).spawn(map.convertPosition(portal.position));
+            NPC npc = new NPC(portal.getNpcId()).spawn(map.convertPosition(portal.getPosition()));
             portals.put(portal, npc);
             statuses.put(portal, PestControlPortalStatus.SHIELDED);
             map.addNpc(npc);
@@ -171,10 +171,10 @@ public final class PestControlGame {
     }
 
     private void deactivatePortalShield(PestControlPortal portal) {
-        String message = "The " + portal.name + ", " + portal.color + " portal shield has dropped!";
+        String message = "The " + portal.getName() + ", " + portal.getColor() + " portal shield has dropped!";
         voidKnight.forceText(message);
         players.forEach(player -> player.sendMessage(message));
-        Optional<NPC> shieldedPortal = map.getNpcs().stream().filter(npc -> npc.getId() == portal.npcId).findFirst();
+        Optional<NPC> shieldedPortal = map.getNpcs().stream().filter(npc -> npc.getId() == portal.getNpcId()).findFirst();
         statuses.replace(portal, PestControlPortalStatus.UNSHIELDED);
         shieldedPortal.ifPresent(npc -> { //TODO this should just transform
 //            map.removeNpc(npc);
@@ -182,7 +182,7 @@ public final class PestControlGame {
 //            NPC unshielded = new NPC(portal.getUnshieldedNpcId());
 //            unshielded.spawn(map.convertPosition(portal.getPosition()));
 //            map.addNpc(unshielded);
-            npc.transform(portal.npcId - 4);
+            npc.transform(portal.getNpcId() - 4);
             portals.replace(portal, npc);
             npc.hitListener = new HitListener().postDamage(hit -> {
                 if (hit.attacker == null || hit.attacker.player == null) {
@@ -190,7 +190,7 @@ public final class PestControlGame {
                     return;
                 }
 
-                players.forEach(player -> player.getPacketSender().sendString(408, portal.healthChildId, "" + npc.getHp()));
+                players.forEach(player -> player.getPacketSender().sendString(408, portal.getHealthChildId(), "" + npc.getHp()));
 
                 Player player = hit.attacker.player;
                 if (player != null) {
@@ -209,7 +209,7 @@ public final class PestControlGame {
             };
         });
 
-        players.forEach(player -> player.getPacketSender().setHidden(408, portal.shieldIconChildId, true));
+        players.forEach(player -> player.getPacketSender().setHidden(408, portal.getShieldIconChildId(), true));
     }
 
     private void spawnPests(PestControlPortal portal) {
@@ -220,7 +220,7 @@ public final class PestControlGame {
                 NPC pest = new NPC(id);
                 try {
                     pest.set("pest_control", this);
-                    pest.spawn(map.convertPosition(portal.pestSpawnPosition));
+                    pest.spawn(map.convertPosition(portal.getPestSpawnPosition()));
                     map.addNpc(pest);
                     pest.getCombat().setAllowRespawn(false);
                     registerHitListener(pest);
